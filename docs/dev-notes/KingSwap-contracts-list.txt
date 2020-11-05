@@ -1,0 +1,61 @@
+KingSwapERC20 – creating KingSwap LP Token
+    • Mint functions : mint KingSwap LP Tokens
+    • Burn Function: burn KingSwap LP Tokens
+    • Approve Function: Approve Transaction
+    • Transfer Functions: Transfer LP Tokens
+    • Permit Functions:
+KingSwapFactory – Similar to Uniswap Factory to create ERC20 Pairs for the respective liquidity pool
+    • allParirsLength function: returns the number of Pairs created from factory to date.
+    • CreatePair function: creates ERC20 Pairs Token1/Token2
+    • SetFeeto function : set who will receive the fee
+    • setFeeToSetter function: set the the Setter for the setFeeto Function
+    • setMigrator function: migrating the Pairs
+KingSwapPair – Similar to UniswapPair, it holds the ERC20 pairs for respective liduidity pools.
+    • getReserves function: available in the liquidity pool
+    • getVirtualPrice function: getLatest Price
+    • SafeTransfer function: transfer of tokens
+    • Initiliaze function: set Token1/Token2 and slippage Token
+    • Update functions: updates reserve and pricing for the pairs
+    • Mintfee functions: setMintFee on to send to liquidity
+    • Mint functions: sends fee to the liqdudity
+    • Burn function: burn from liqduity
+    • UpdateVirtualPrice function: update Virtual Price
+    • Swap Functions: swap token1/token2
+    • getToken0MarketPrice: get the Token 1 MarketPrice
+    • getAmountIn: getAmount to be converted in
+    • getAmountOut: getAmount to be converted out
+    • getAmountOutMarket: getAmount to be converted in
+    • getAmountInMarket getAmount to be converted in
+    • getAmountOutPool: getAmount to be converted in
+    • getAmountInPool getAmount to be converted in
+    • getAmountOutReal getAmount to be converted in
+    • getArmountInReal getAmount to be converted in
+    • getAmountOutFinal getAmount to be converted in
+    • getAmountInFinal getAmount to be converted in
+    • DealSlppageWithIn Deals with Slippage to be converted in
+    • DealSlippageWithOut Deals with Slippage to be converted in
+    • Skim: Standard Skim
+    • Sync: Standard Sync
+KingSwapRouter – It function to route ERC20 Token 1 to WETH and then WETH to ERC20 Token 2.
+    • addLiqudity functions: add liqduity to pool
+    • AddliquidityTH functions: add Eth Liquditiy pool
+    • removeLiqudity functions: remove liquidity from pool
+    • removeLiquidityEth functions: remove ETH liquidity from pool
+    • removeLiqduityWithPermit functions: remove with permit
+    • Basically the rest is the same with
+KingSwapSlippageToken – it holds all slippage amount and convert into this ERC20 token and will distribute to the public later on.
+    • Same Functions as normal ERC20
+RoundTable – ERC20 Token that deals with distributing 0.05% to all those who stake KING Tokens
+    • Enter functions: user deposit King Token and receives their 0.05% allocation
+    • Leave functuons: user withdraw King Token and their respective allocated 0.05% in King Token
+KingMaker – Deals with converting 0.05% to King Token and transfer it to RoundTable contract so that it can be distributed.
+    • Conver functions: converts 0.05% of fee from Pairs to King Token and deposit to roundtable contract
+    • toWETH function: convert to WETH
+    • toking function: convert to King
+    • setBurnRatio: set ratio to burn token
+GovernanceAlpha – Voting protocol
+    • Standard Governance Alpha protocol
+Migrator – Migrate pool from uniswap to KingSwap
+    • Migrate functions: migrate Tokens Pairs pool from uniswap to KingSwap
+KingVoterProxy – Voting Rights for the community
+    • Standard VoterProxy protocol

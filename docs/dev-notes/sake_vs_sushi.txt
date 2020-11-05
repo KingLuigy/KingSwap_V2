@@ -1,0 +1,31 @@
+== Sake vs Sushi contracts
+Sake                        Sushi
+---------------------------------------------
+GovernorAlpha.sol           GovernorAlpha.sol
+Migrator.sol                Migrator.sol
+STokenMaster.sol
+SakeBar.sol                 SushiBar.sol
+SakeDrinker.sol
+SakeLock.sol
+SakeMaker.sol               SushiMaker.sol
+SakeMaster.sol              MasterChef.sol
+SakeMasterV2.sol
+SakeToken.sol               SushiToken.sol
+SakeUni.sol
+SakeUniV2.sol               SushiRestaurant.sol ???
+SakeVoterCalc.sol
+SakeVoterProxy.sol
+Timelock.sol                 Timelock.sol
+SakeSwapERC20.sol            UniswapV2ERC20.sol
+SakeSwapFactory.sol          UniswapV2Factory.sol
+SakeSwapPair.sol             UniswapV2Pair.sol
+SakeSwapRouter.sol           UniswapV2Router02.sol
+SakeSwapSlippageToken.sol
+SakeSwapBatchTrade.sol
+SakeSwapMigrator.sol
+UniStake.sol
+
+DevFunds.sol
+???                          SushiBurner.sol
+???                          Migrator2.sol
+???                          UniMigrator.sol

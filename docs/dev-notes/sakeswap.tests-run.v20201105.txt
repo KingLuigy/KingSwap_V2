@@ -1,0 +1,599 @@
+sakeswap-protocol$ npm test
+
+== contract tested
+?1    Contract: DevFunds
+++2   Contract: Migrator           (!! Pair,Factory) (SakeMAster)
+++3   Contract: SakeBar
+++2   Contract: SakeDrinker        (!! Pair,Factory)
+++1   Contract: SakeLock             (SakeMaster)
+++4   Contract: SakeMaker          (!! Pair,Factory)
+++10  Contract: SakeMaster
+++29  Contract: SakeMasterV2
+++11  Contract: SakeSwapBatchTrade (!! Pair,Router,Factory,SToken)
+++4   Contract: SakeSwapMigrator   (!! Pair,Router,Factory)
+++5   Contract: SakeToken
++6?1  Contract: SakeUni              (StakingRewards) (SakeMaster,StakingRewards)
+++6   Contract: SakeUniV2          (!! Pair,Router,Factory) (SakeMaster,StakingRewards,Migrator)
+++3   Contract: SakeVoterCalc      (!! Pair,Factory) (SakeMaster,SakeBar,STokenMaster,SakeMasterV2)
+++3   Contract: SakeVoterCalc      (!! Pair,Factory) (SakeVoterProxy,SakeMaster,SakeBar,STokenMaster,SakeMasterV2)
+++16  Contract: STokenMaster
+++3   Contract: Timelock           (SakeMaster)
++1?1  Contract: Governor           (SakeMaster,Timelock)
+-------------------
+18 tested (from 24)
+
+== contracts (excl. interfaces, libs, dependencies)
+DevFunds.sol            [t]
+GovernorAlpha.sol       [t]
+Migrator.sol            [t]
+STokenMaster.sol        [t]
+SakeBar.sol             [t]
+SakeDrinker.sol         [t]
+SakeLock.sol            [t]
+SakeMaker.sol           [t]
+SakeMaster.sol          [t]
+SakeMasterV2.sol        [t]
+SakeToken.sol           [t]
+SakeUni.sol             [t]
+SakeUniV2.sol           [t]
+SakeVoterCalc.sol       [t]
+SakeVoterProxy.sol      [t]
+Timelock.sol            [t]
+SakeSwapERC20.sol
+SakeSwapFactory.sol
+SakeSwapPair.sol
+SakeSwapRouter.sol
+SakeSwapSlippageToken.sol
+SakeSwapBatchTrade.sol  [t]
+SakeSwapMigrator.sol    [t]
+UniStake.sol
+-------------------
+24 contracts
+
+sakeswap-protocol$ truffle test
+Using network 'test'.
+
+
+Compiling your contracts...
+===========================
+> Compiling ./contracts/sakeswap/SakeSwapFactory.sol
+> Compiling ./contracts/sakeswap/SakeSwapRouter.sol
+> Compiling ./contracts/sakeswap/libraries/SakeSwapLibrary.sol
+> Compiling ./contracts/tools/SakeSwapBatchTrade.sol
+> Compilation warnings encountered:
+
+    /home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/DevFunds.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/GovernorAlpha.sol:55:14: Warning: Only state variables can have a docstring. This will be disallowed in 0.7.0.
+        uint id;
+             ^^
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/GovernorAlpha.sol:58:17: Warning: Only state variables can have a docstring. This will be disallowed in 0.7.0.
+        address proposer;
+                ^------^
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/GovernorAlpha.sol:61:14: Warning: Only state variables can have a docstring. This will be disallowed in 0.7.0.
+        uint eta;
+             ^-^
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/GovernorAlpha.sol:64:19: Warning: Only state variables can have a docstring. This will be disallowed in 0.7.0.
+        address[] targets;
+                  ^-----^
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/GovernorAlpha.sol:67:16: Warning: Only state variables can have a docstring. This will be disallowed in 0.7.0.
+        uint[] values;
+               ^----^
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/GovernorAlpha.sol:70:18: Warning: Only state variables can have a docstring. This will be disallowed in 0.7.0.
+        string[] signatures;
+                 ^--------^
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/GovernorAlpha.sol:73:17: Warning: Only state variables can have a docstring. This will be disallowed in 0.7.0.
+        bytes[] calldatas;
+                ^-------^
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/GovernorAlpha.sol:76:14: Warning: Only state variables can have a docstring. This will be disallowed in 0.7.0.
+        uint startBlock;
+             ^--------^
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/GovernorAlpha.sol:79:14: Warning: Only state variables can have a docstring. This will be disallowed in 0.7.0.
+        uint endBlock;
+             ^------^
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/GovernorAlpha.sol:82:14: Warning: Only state variables can have a docstring. This will be disallowed in 0.7.0.
+        uint forVotes;
+             ^------^
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/GovernorAlpha.sol:85:14: Warning: Only state variables can have a docstring. This will be disallowed in 0.7.0.
+        uint againstVotes;
+             ^----------^
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/GovernorAlpha.sol:88:14: Warning: Only state variables can have a docstring. This will be disallowed in 0.7.0.
+        bool canceled;
+             ^------^
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/GovernorAlpha.sol:91:14: Warning: Only state variables can have a docstring. This will be disallowed in 0.7.0.
+        bool executed;
+             ^------^
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/GovernorAlpha.sol:94:38: Warning: Only state variables can have a docstring. This will be disallowed in 0.7.0.
+        mapping (address => Receipt) receipts;
+                                     ^------^
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/GovernorAlpha.sol:100:14: Warning: Only state variables can have a docstring. This will be disallowed in 0.7.0.
+        bool hasVoted;
+             ^------^
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/GovernorAlpha.sol:103:14: Warning: Only state variables can have a docstring. This will be disallowed in 0.7.0.
+        bool support;
+             ^-----^
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/GovernorAlpha.sol:106:17: Warning: Only state variables can have a docstring. This will be disallowed in 0.7.0.
+        uint256 votes;
+                ^---^
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/GovernorAlpha.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/Migrator.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/STokenMaster.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/SakeBar.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/SakeDrinker.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/SakeLock.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/SakeMaker.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/SakeMaster.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/SakeMasterV2.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/SakeToken.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/SakeUni.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/SakeUniV2.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/Timelock.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/interfaces/IMigratorChef.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/interfaces/IStakingRewards.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/test/MockERC20.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,/home/konstantinovv/source/KingLuigy/sakeswap-protocol/contracts/unistake/UniStake.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+
+> Artifacts written to /tmp/test--7991-0caJXqNiPrA2
+> Compiled successfully using:
+   - solc: 0.6.12+commit.27d51765.Emscripten.clang
+
+
+  Contract: DevFunds
+    - should revert before lockTime
+
+  Contract: Migrator
+    ✓ should do the migration successfully (1546166 gas)
+    ✓ should allow first minting from public only after migrator is gone (4987541 gas)
+
+  Contract: SakeBar
+    ✓ should not allow enter if not enough approve (539048 gas)
+    ✓ should not allow withraw more than what you have (327146 gas)
+    ✓ should work with more than one participant (620561 gas)
+
+  Contract: SakeDrinker
+    ✓ only owner can set factory (50884 gas)
+    ✓ should convert uni to sake successfully (535312 gas)
+
+  Contract: SakeLock
+    ✓ should deposit SakeLock Token success (572128 gas)
+
+  Contract: SakeMaker
+    ✓ should transfer owner successfully (30839 gas)
+    ✓ should set burn ratio successfully (101223 gas)
+    ✓ should make SAKEs successfully (2573338 gas)
+    ✓ should make SAKEs with new burn ratio successfully (2481642 gas)
+
+  Contract: SakeMaster
+    ✓ should set correct state variables (2032198 gas)
+    ✓ should allow dev and only dev to update dev (2080858 gas)
+    With ERC/LP token added to the field
+      ✓ should allow emergency withdraw (2314458 gas)
+      ✓ should give out SAKEs only after farming time (2774081 gas)
+      ✓ should not distribute SAKEs if no one deposit (2483514 gas)
+      ✓ should distribute SAKEs properly for each staker (3392608 gas)
+      ✓ should give proper SAKEs allocation to each pool (2711175 gas)
+      ✓ getMultiplier (2001315 gas)
+      ✓ add lp token (2293442 gas)
+      ✓ handover the saketoken mintage right (2066663 gas)
+
+  Contract: SakeMasterV2
+    ✓ should set correct state variables
+    ✓ should allow owner and only owner to update admin (51381 gas)
+    ✓ should allow owner and only owner to update admin (51381 gas)
+    ✓ should allow owner and only owner to update sake Fee Address (51243 gas)
+    ✓ should allow owner and only owner to update sakeMaker (51153 gas)
+    ✓ should allow owner and only owner to update lpFeeRatio (72960 gas)
+    ✓ should allow owner and only owner to update withdrawInterval (49888 gas)
+    ✓ should allow admin and only admin to update sake fee ratio (72974 gas)
+    ✓ should allow admin and only admin to update sake per block for yeild farming (50275 gas)
+    ✓ should allow admin and only admin to update sake per block for trade mining (50295 gas)
+    ✓ set trade mining speed up end block (50569 gas)
+    ✓ set yield farming II end block (50543 gas)
+    ✓ set trade mining end block (50615 gas)
+    ✓ handover the saketoken mintage right (65326 gas)
+    ✓ getMultiplier
+    ✓ getSakePerBlock
+    With ERC/LP token added to the field
+      ✓ add pool (405247 gas)
+      ✓ set pool allocpoint (249628 gas)
+      ✓ set multiplierSToken (241846 gas)
+      ✓ set pool withdraw sake switch (227904 gas)
+      ✓ should give out SAKEs only after farming time (3903566 gas)
+      ✓ should distribute SAKEs properly for each staker (4856462 gas)
+      ✓ should give proper SAKEs allocation to each pool (3887436 gas)
+@openzeppelin/test-helpers WARN advanceBlockTo: Advancing too many blocks is causing this test to be slow.
+      ✓ should stop giving bonus SAKEs after the bonus period ends (3514350 gas)
+@openzeppelin/test-helpers WARN advanceBlockTo: Advancing too many blocks is causing this test to be slow.
+      ✓ can not harvest sake if harvest interval less than withdraw interval (4111993 gas)
+@openzeppelin/test-helpers WARN advanceBlockTo: Advancing too many blocks is causing this test to be slow.
+      ✓ lp fee ratio (4886289 gas)
+@openzeppelin/test-helpers WARN advanceBlockTo: Advancing too many blocks is causing this test to be slow.
+      ✓ sake fee ratio (4150923 gas)
+@openzeppelin/test-helpers WARN advanceBlockTo: Advancing too many blocks is causing this test to be slow.
+      ✓ withdraw (4238596 gas)
+@openzeppelin/test-helpers WARN advanceBlockTo: Advancing too many blocks is causing this test to be slow.
+      ✓ emergency withdraw (3678856 gas)
+
+  Contract: SakeSwapBatchTrade
+gas used when swap token 10 times:1874622
+stoken amount when swap token 10 times:1769
+1042
+    ✓ should swap from tokenA to tokenB 10 times successfully (2256329 gas)
+gas used when swap token 10 times:2046938
+stoken amount when swap token 10 times:1769
+10000
+    ✓ should swap from tokenA to tokenB 10 times and add liquidity successfully (2428645 gas)
+gas used when swap token 10 times:323343
+stoken amount when swap token 10 times:0
+10000 0 4974
+    ✓ should add liquidity successfully (705066 gas)
+gas used when swap token 20 times:3507606
+stoken amount when swap token 20 times:2714
+3405 2615 0
+    ✓ should swap from tokenA to tokenB 20 time successfully (4155653 gas)
+gas used when swap eth 10 times:1862070
+stoken amount when swap eth 10 times:34762577882735791232
+eth diff: 5015522400215295026
+4978281000215295026 34762577882735791232 0
+    ✓ should swap from ETH to other tokens 10 times successfully (1862070 gas)
+gas used when swap eth 10 times:2045826
+stoken amount when swap eth 10 times:1500653099538836700078
+eth diff: 1040916520000000000
+add liqudity:428905055737162469
+1000000000000000000 1500653099538836700078 428905055737162469
+    ✓ should swap from ETH to other tokens and add liquidity successfully (2045826 gas)
+gas used when swap eth 10 times:302609
+stoken amount when swap eth 10 times:0
+eth diff: 1006052180000000000
+add liqudity:10540925533894597773
+1000000000000000000 0 10540925533894597773
+    ✓ should add ETH liquidity successfully (302609 gas)
+gas used when swap eth 20 times:3565430
+stoken amount when swap eth 20 times:34762812992070076010
+4999906689255373446 34762812992070076010 0
+    ✓ should swap from ETH to other tokens 20 times successfully (3565430 gas)
+0x78f417302dE7D49046688e4E39807e6ADdc47877 0xcE728368EE4C3fB7Da0aC5f4b1738905BBB0d1F4 0x78f417302dE7D49046688e4E39807e6ADdc47877
+gas used when swap token 20 times:3559322
+stoken amount when swap token 20 times:60484748368298189
+token consumed:128341854713702413
+128341854713702413 60484748368298189 0
+    ✓ simulate ETH/SAKE (3947783 gas)
+gas used when swap token 20 times:3559286
+stoken amount when swap token 20 times:245723919
+token consumed:175921032
+175921032 245723919 0
+    ✓ simulate USDT/SAKE (3945766 gas)
+gas used when swap token 20 times:3559334
+stoken amount when swap token 20 times:4475660439902224048854
+token consumed:182002413715242665995
+182002413715242665995 4475660439902224048854 0
+    ✓ simulate DAI/SAKE (3948170 gas)
+
+  Contract: SakeSwapMigrator
+    ✓ should migrate from uniswap successfully (827986 gas)
+    ✓ should migrate from sushiswap successfully (827843 gas)
+    ✓ should migrate from uniswap with permit successfully (890341 gas)
+    ✓ should migrate from sushiswap with permit successfully (848393 gas)
+
+  Contract: SakeToken
+    ✓ should have correct name and symbol and decimal
+    ✓ should only allow owner to mint token (143103 gas)
+    ✓ should supply token transfers properly (211244 gas)
+    ✓ should fail if you try to do bad transfers (114606 gas)
+    ✓ should update vote of delegatee when delegator transfers (541127 gas)
+
+  Contract: SakeUni
+    ✓ should set correct state variables (2328481 gas)
+    ✓ pool info (4548038 gas)
+    ✓ getMultiplier (2328481 gas)
+    With ERC/LP token added to the field
+      - should allow emergency withdraw
+      ✓ should give out SAKEs only after farming time (3319050 gas)
+      ✓ should distribute SAKEs properly for each staker (3555059 gas)
+      ✓ should give proper SAKEs allocation to each pool (3236003 gas)
+
+  Contract: SakeUniV2
+find init code hash: 7c4e1fbd1b5def22c06eedce5b0ad2e1d64287d737d41be26ef02f3d89c8f5dd
+    ✓ should allow emergency withdraw (573063 gas)
+find init code hash: 7c4e1fbd1b5def22c06eedce5b0ad2e1d64287d737d41be26ef02f3d89c8f5dd
+    ✓ should deposit and withdraw correct (1724901 gas)
+find init code hash: 7c4e1fbd1b5def22c06eedce5b0ad2e1d64287d737d41be26ef02f3d89c8f5dd
+    ✓ should pending works right (943041 gas)
+find init code hash: 7c4e1fbd1b5def22c06eedce5b0ad2e1d64287d737d41be26ef02f3d89c8f5dd
+964506172839506172
+    ✓ should both withdraw sake and uni rewards (898175 gas)
+find init code hash: 7c4e1fbd1b5def22c06eedce5b0ad2e1d64287d737d41be26ef02f3d89c8f5dd
+oldBalance: 15000000000000000000000
+    ✓ should migrate works well (10355466 gas)
+find init code hash: 7c4e1fbd1b5def22c06eedce5b0ad2e1d64287d737d41be26ef02f3d89c8f5dd
+    ✓ should two pools works well (13129205 gas)
+
+  Contract: SakeVoterCalc
+    ✓ check totalSupply (493157 gas)
+    ✓ check votePools api (54240058 gas)
+    ✓ check balanceOf (38805735 gas)
+
+  Contract: SakeVoterCalc
+    ✓ check totalSupply (493157 gas)
+    ✓ check balanceOf (38805841 gas)
+    ✓ check setCalcAddr (9677027 gas)
+
+  Contract: STokenMaster
+    ✓ should set correct state variables
+    ✓ pool info (1782933 gas)
+    ✓ getMultiplier
+    With ERC/LP token added to the field
+      ✓ should give out SAKEs only after farming time (3300831 gas)
+      ✓ should not distribute SAKEs if no one deposit (3014292 gas)
+      ✓ should distribute SAKEs properly for each staker (3599276 gas)
+      ✓ should give proper SAKEs allocation to each pool (3596860 gas)
+@openzeppelin/test-helpers WARN advanceBlockTo: Advancing too many blocks is causing this test to be slow.
+      ✓ should stop giving SAKEs after the stoken mining is end (3037019 gas)
+@openzeppelin/test-helpers WARN advanceBlockTo: Advancing too many blocks is causing this test to be slow.
+      ✓ sake owner is sTokenMaster (2980548 gas)
+@openzeppelin/test-helpers WARN advanceBlockTo: Advancing too many blocks is causing this test to be slow.
+      ✓ with draw (3129545 gas)
+@openzeppelin/test-helpers WARN advanceBlockTo: Advancing too many blocks is causing this test to be slow.
+      ✓ emergency with draw (2942187 gas)
+      ✓ Burn sake for pool (550684 gas)
+      ✓ set admin (51130 gas)
+      ✓ set endBlock (51457 gas)
+      ✓ set Multiplier (49809 gas)
+      ✓ set sake per block (49721 gas)
+
+  Contract: Timelock
+    ✓ should not allow non-owner to do operation (101337 gas)
+    ✓ should do the timelock thing (142801 gas)
+    ✓ should also work with SakeMaster (3917326 gas)
+
+  Contract: Governor
+    ✓ should work (9067904 gas)
+    - should run long test
+
+·--------------------------------------------------------|---------------------------|-------------|----------------------------·
+|          Solc version: 0.6.12+commit.27d51765          ·  Optimizer enabled: true  ·  Runs: 200  ·  Block limit: 6721975 gas  │
+·························································|···························|·············|·····························
+|  Methods                                               ·              200 gwei/gas               ·       398.80 usd/eth       │
+·······················|·································|·············|·············|·············|··············|··············
+|  Contract            ·  Method                         ·  Min        ·  Max        ·  Avg        ·  # calls     ·  usd (avg)  │
+·······················|·································|·············|·············|·············|··············|··············
+|  GovernorAlpha       ·  __acceptAdmin                  ·          -  ·          -  ·      23390  ·           1  ·       1.87  │
+·······················|·································|·············|·············|·············|··············|··············
+|  GovernorAlpha       ·  castVote                       ·          -  ·          -  ·      96720  ·           1  ·       7.71  │
+·······················|·································|·············|·············|·············|··············|··············
+|  GovernorAlpha       ·  propose                        ·          -  ·          -  ·     386845  ·           1  ·      30.85  │
+·······················|·································|·············|·············|·············|··············|··············
+|  Migrations          ·  setCompleted                   ·          -  ·          -  ·      27266  ·          16  ·       2.17  │
+·······················|·································|·············|·············|·············|··············|··············
+|  MockERC20           ·  approve                        ·      44011  ·      44131  ·      44042  ·         123  ·       3.51  │
+·······················|·································|·············|·············|·············|··············|··············
+|  MockERC20           ·  transfer                       ·      36151  ·      51211  ·      50618  ·         448  ·       4.04  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeBar             ·  enter                          ·      67518  ·     112186  ·      86343  ·          11  ·       6.89  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeBar             ·  leave                          ·      59393  ·      74405  ·      70652  ·           4  ·       5.64  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeDrinker         ·  convert                        ·          -  ·          -  ·     127262  ·           1  ·      10.15  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeDrinker         ·  setFactory                     ·          -  ·          -  ·      28323  ·           2  ·       2.26  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeLock            ·  deposit                        ·          -  ·          -  ·      90076  ·           1  ·       7.18  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeLock            ·  setwithdrawContractAddr        ·          -  ·          -  ·      43484  ·           1  ·       3.47  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeLock            ·  withdrawFromSakeMaster         ·          -  ·          -  ·     196926  ·           1  ·      15.71  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeLock            ·  withdrawToContract             ·          -  ·          -  ·      61653  ·           1  ·       4.92  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMaker           ·  convert                        ·     263216  ·     602092  ·     374805  ·           5  ·      29.89  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMaker           ·  setBurnRatio                   ·      28186  ·      28198  ·      28194  ·           3  ·       2.25  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMaker           ·  transferOwnership              ·          -  ·          -  ·      30839  ·           2  ·       2.46  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMaster          ·  add                            ·     119106  ·     236012  ·     158055  ·          26  ·      12.61  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMaster          ·  deposit                        ·      46664  ·     276219  ·     111557  ·          23  ·       8.90  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMaster          ·  dev                            ·          -  ·          -  ·      28435  ·           3  ·       2.27  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMaster          ·  emergencyWithdraw              ·          -  ·          -  ·      24912  ·           2  ·       1.99  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMaster          ·  handoverSakeMintage            ·          -  ·          -  ·      34465  ·           1  ·       2.75  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMaster          ·  migrate                        ·          -  ·          -  ·     267615  ·           1  ·      21.34  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMaster          ·  setMigrator                    ·          -  ·          -  ·      43474  ·           1  ·       3.47  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMaster          ·  transferOwnership              ·          -  ·          -  ·      30905  ·           2  ·       2.46  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMaster          ·  withdraw                       ·      87845  ·     169368  ·     125941  ·           8  ·      10.05  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMasterV2        ·  add                            ·     164921  ·     235767  ·     188348  ·          20  ·      15.02  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMasterV2        ·  deposit                        ·      92106  ·     243791  ·     176965  ·          27  ·      14.11  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMasterV2        ·  emergencyWithdraw              ·          -  ·          -  ·      60662  ·           1  ·       4.84  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMasterV2        ·  handoverSakeMintage            ·          -  ·          -  ·      34443  ·           2  ·       2.75  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMasterV2        ·  set                            ·          -  ·          -  ·      36354  ·           2  ·       2.90  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMasterV2        ·  setAdmin                       ·          -  ·          -  ·      28574  ·           4  ·       2.28  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMasterV2        ·  setLpFeeRatio                  ·          -  ·          -  ·      28158  ·           3  ·       2.25  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMasterV2        ·  setMultiplierSToken            ·          -  ·          -  ·      28571  ·           2  ·       2.28  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMasterV2        ·  setSakeFeeAddress              ·          -  ·          -  ·      28523  ·           2  ·       2.27  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMasterV2        ·  setSakeFeeRatio                ·          -  ·          -  ·      28170  ·           2  ·       2.25  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMasterV2        ·  setSakeLockSwitch              ·          -  ·          -  ·      14679  ·           3  ·       1.17  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMasterV2        ·  setSakeMaker                   ·          -  ·          -  ·      28478  ·           2  ·       2.27  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMasterV2        ·  setSakePerBlockTradeMining     ·      27536  ·      27608  ·      27548  ·          12  ·       2.20  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMasterV2        ·  setSakePerBlockYieldFarming    ·      27538  ·      27598  ·      27548  ·          12  ·       2.20  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMasterV2        ·  setTradeMiningEndBlock         ·      28158  ·      28170  ·      28166  ·           3  ·       2.25  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMasterV2        ·  setTradeMiningSpeedUpEndBlock  ·          -  ·          -  ·      28147  ·           2  ·       2.25  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMasterV2        ·  setWithdrawInterval            ·      27389  ·      27401  ·      27392  ·           7  ·       2.18  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMasterV2        ·  setYieldFarmingIIEndBlock      ·      28122  ·      28134  ·      28130  ·           3  ·       2.24  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeMasterV2        ·  withdraw                       ·     109958  ·     208407  ·     145603  ·          20  ·      11.61  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeSwapBatchTrade  ·  swapExactETHForTokens          ·     302609  ·    3565430  ·    1943984  ·           8  ·     155.05  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeSwapBatchTrade  ·  swapExactTokensForTokens       ·     323343  ·    3559334  ·    2561659  ·          13  ·     204.32  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeSwapFactory     ·  createPair                     ·    3917239  ·    3932273  ·    3927196  ·          74  ·     313.23  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeSwapFactory     ·  setFeeTo                       ·          -  ·          -  ·      43433  ·           2  ·       3.46  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeSwapFactory     ·  setMigrator                    ·      14086  ·      43412  ·      36081  ·           4  ·       2.88  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeSwapMigrator    ·  migrateSushiSwap               ·          -  ·          -  ·     212382  ·           2  ·      16.94  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeSwapMigrator    ·  migrateSushiSwapWithPermit     ·          -  ·          -  ·     255869  ·           1  ·      20.41  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeSwapMigrator    ·  migrateUniswap                 ·          -  ·          -  ·     212445  ·           2  ·      16.94  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeSwapMigrator    ·  migrateUniswapWithPermit       ·          -  ·          -  ·     297921  ·           2  ·      23.76  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeSwapPair        ·  approve                        ·      44017  ·      44089  ·      44054  ·          24  ·       3.51  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeSwapPair        ·  burn                           ·          -  ·          -  ·      71246  ·           2  ·       5.68  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeSwapPair        ·  mint                           ·     100402  ·     159313  ·     139921  ·          24  ·      11.16  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeSwapPair        ·  sync                           ·      40170  ·      82438  ·      56782  ·           6  ·       4.53  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeSwapPair        ·  transfer                       ·      35972  ·      51032  ·      50318  ·          22  ·       4.01  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeSwapRouter      ·  addLiquidity                   ·     176428  ·     205292  ·     191996  ·          22  ·      15.31  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeSwapRouter      ·  addLiquidityETH                ·     217570  ·     217622  ·     217594  ·          11  ·      17.36  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeSwapRouter      ·  swapExactTokensForTokens       ·          -  ·          -  ·     171202  ·           1  ·      13.66  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeToken           ·  approve                        ·      29035  ·      44047  ·      42678  ·          11  ·       3.40  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeToken           ·  delegate                       ·      46578  ·     129507  ·      95912  ·           3  ·       7.65  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeToken           ·  mint                           ·      37642  ·      89677  ·      62171  ·          59  ·       4.96  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeToken           ·  transfer                       ·      37986  ·      90033  ·      49682  ·          25  ·       3.96  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeToken           ·  transferOwnership              ·      30871  ·      30883  ·      30883  ·          33  ·       2.46  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeUni             ·  add                            ·     150316  ·     172829  ·     155480  ·           5  ·      12.40  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeUni             ·  deposit                        ·      38642  ·     313533  ·     167542  ·          14  ·      13.36  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeUni             ·  set                            ·          -  ·          -  ·      36393  ·           2  ·       2.90  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeUniV2           ·  deposit                        ·     295322  ·     574063  ·     390371  ·          14  ·      31.14  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeUniV2           ·  emergencyWithdraw              ·          -  ·          -  ·     182620  ·           2  ·      14.57  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeUniV2           ·  migrate                        ·          -  ·          -  ·     625183  ·           1  ·      49.86  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeUniV2           ·  setMigrator                    ·          -  ·          -  ·      43496  ·           1  ·       3.47  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeUniV2           ·  withdraw                       ·      96081  ·     519233  ·     265231  ·          10  ·      21.15  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeVoterCalc       ·  addVotePool                    ·     147156  ·     275555  ·     203218  ·          59  ·      16.21  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeVoterCalc       ·  delVotePool                    ·      75713  ·     203174  ·     135054  ·          54  ·      10.77  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeVoterCalc       ·  setPow                         ·      15079  ·      45091  ·      32944  ·          14  ·       2.63  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeVoterCalc       ·  setSqrtEnable                  ·      14507  ·      44025  ·      30906  ·           9  ·       2.47  │
+·······················|·································|·············|·············|·············|··············|··············
+|  SakeVoterProxy      ·  setCalcAddr                    ·          -  ·          -  ·      28411  ·           2  ·       2.27  │
+·······················|·································|·············|·············|·············|··············|··············
+|  StakingRewards      ·  notifyRewardAmount             ·          -  ·          -  ·      95822  ·          12  ·       7.64  │
+·······················|·································|·············|·············|·············|··············|··············
+|  STokenMaster        ·  add                            ·     141209  ·     173625  ·     154010  ·          12  ·      12.28  │
+·······················|·································|·············|·············|·············|··············|··············
+|  STokenMaster        ·  burnSakeForPool                ·      57509  ·      87509  ·      67509  ·           3  ·       5.38  │
+·······················|·································|·············|·············|·············|··············|··············
+|  STokenMaster        ·  deposit                        ·      66088  ·     211946  ·     162831  ·          27  ·      12.99  │
+·······················|·································|·············|·············|·············|··············|··············
+|  STokenMaster        ·  emergencyWithdraw              ·          -  ·          -  ·      96867  ·           2  ·       7.73  │
+·······················|·································|·············|·············|·············|··············|··············
+|  STokenMaster        ·  set                            ·          -  ·          -  ·      36332  ·           1  ·       2.90  │
+·······················|·································|·············|·············|·············|··············|··············
+|  STokenMaster        ·  setAdmin                       ·          -  ·          -  ·      28465  ·           2  ·       2.27  │
+·······················|·································|·············|·············|·············|··············|··············
+|  STokenMaster        ·  setEndBlock                    ·          -  ·          -  ·      28991  ·           2  ·       2.31  │
+·······················|·································|·············|·············|·············|··············|··············
+|  STokenMaster        ·  setMultiplierSToken            ·          -  ·          -  ·      27367  ·           2  ·       2.18  │
+·······················|·································|·············|·············|·············|··············|··············
+|  STokenMaster        ·  setSakePerBlock                ·          -  ·          -  ·      27323  ·           1  ·       2.18  │
+·······················|·································|·············|·············|·············|··············|··············
+|  STokenMaster        ·  setWithdrawSwitch              ·          -  ·          -  ·      44392  ·           4  ·       3.54  │
+·······················|·································|·············|·············|·············|··············|··············
+|  STokenMaster        ·  withdraw                       ·          -  ·          -  ·     284380  ·           2  ·      22.68  │
+·······················|·································|·············|·············|·············|··············|··············
+|  Timelock            ·  executeTransaction             ·      33203  ·     122565  ·      57211  ·           4  ·       4.56  │
+·······················|·································|·············|·············|·············|··············|··············
+|  Timelock            ·  queueTransaction               ·      51920  ·      52993  ·      52555  ·           3  ·       4.19  │
+·······················|·································|·············|·············|·············|··············|··············
+|  Timelock            ·  setPendingAdmin                ·          -  ·          -  ·      66198  ·           1  ·       5.28  │
+·······················|·································|·············|·············|·············|··············|··············
+|  Deployments                                           ·                                         ·  % of limit  ·             │
+·························································|·············|·············|·············|··············|··············
+|  GovernorAlpha                                         ·          -  ·          -  ·    2891412  ·        43 %  ·     230.62  │
+·························································|·············|·············|·············|··············|··············
+|  Migrations                                            ·          -  ·          -  ·     129186  ·       1.9 %  ·      10.30  │
+·························································|·············|·············|·············|··············|··············
+|  Migrator                                              ·          -  ·          -  ·     515230  ·       7.7 %  ·      41.09  │
+·························································|·············|·············|·············|··············|··············
+|  MockERC20                                             ·     727588  ·     727828  ·     727710  ·      10.8 %  ·      58.04  │
+·························································|·············|·············|·············|··············|··············
+|  SakeBar                                               ·          -  ·          -  ·    1045078  ·      15.5 %  ·      83.36  │
+·························································|·············|·············|·············|··············|··············
+|  SakeDrinker                                           ·          -  ·          -  ·     565672  ·       8.4 %  ·      45.12  │
+·························································|·············|·············|·············|··············|··············
+|  SakeLock                                              ·          -  ·          -  ·    1181156  ·      17.6 %  ·      94.21  │
+·························································|·············|·············|·············|··············|··············
+|  SakeMaker                                             ·    1373462  ·    1373474  ·    1373468  ·      20.4 %  ·     109.55  │
+·························································|·············|·············|·············|··············|··············
+|  SakeMaster                                            ·    1982103  ·    2001315  ·    1990346  ·      29.6 %  ·     158.75  │
+·························································|·············|·············|·············|··············|··············
+|  SakeMasterV2                                          ·    2899437  ·    2918661  ·    2916200  ·      43.4 %  ·     232.60  │
+·························································|·············|·············|·············|··············|··············
+|  SakeSwapBatchTrade                                    ·    1538714  ·    1538738  ·    1538733  ·      22.9 %  ·     122.73  │
+·························································|·············|·············|·············|··············|··············
+|  SakeSwapFactory                                       ·          -  ·          -  ·    3970669  ·      59.1 %  ·     316.70  │
+·························································|·············|·············|·············|··············|··············
+|  SakeSwapMigrator                                      ·     856375  ·     856387  ·     856384  ·      12.7 %  ·      68.31  │
+·························································|·············|·············|·············|··············|··············
+|  SakeSwapRouter                                        ·    4359426  ·    4359438  ·    4359437  ·      64.9 %  ·     347.71  │
+·························································|·············|·············|·············|··············|··············
+|  SakeToken                                             ·          -  ·          -  ·    1635181  ·      24.3 %  ·     130.42  │
+·························································|·············|·············|·············|··············|··············
+|  SakeUni                                               ·    2328481  ·    2328493  ·    2328484  ·      34.6 %  ·     185.72  │
+·························································|·············|·············|·············|··············|··············
+|  SakeUniV2                                             ·    2823024  ·    2823048  ·    2823039  ·        42 %  ·     225.17  │
+·························································|·············|·············|·············|··············|··············
+|  SakeVoterCalc                                         ·          -  ·          -  ·    1949695  ·        29 %  ·     155.51  │
+·························································|·············|·············|·············|··············|··············
+|  SakeVoterProxy                                        ·          -  ·          -  ·     306343  ·       4.6 %  ·      24.43  │
+·························································|·············|·············|·············|··············|··············
+|  StakingRewards                                        ·    1232760  ·    1232772  ·    1232771  ·      18.3 %  ·      98.33  │
+·························································|·············|·············|·············|··············|··············
+|  STokenMaster                                          ·    2305858  ·    2325082  ·    2321470  ·      34.5 %  ·     185.16  │
+·························································|·············|·············|·············|··············|··············
+|  Timelock                                              ·    1428367  ·    1428379  ·    1428376  ·      21.2 %  ·     113.93  │
+·························································|·············|·············|·············|··············|··············
+|  WETH9                                                 ·          -  ·          -  ·     505829  ·       7.5 %  ·      40.34  │
+·--------------------------------------------------------|-------------|-------------|-------------|--------------|-------------·
+
+  109 passing (22m)
+  3 pending
