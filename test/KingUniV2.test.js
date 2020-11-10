@@ -185,10 +185,8 @@ contract('KingUniV2', ([alice, bob, carol, fee]) => {
         await this.kingUniV2.deposit(0, { from: bob });
         const uniRewardRate = await this.uniStake.rewardRate();
         console.log(uniRewardRate.toString());
-        assert.equal((await this.king.balanceOf(bob)).toString(), KING_PER_BLOCK.mul(web3.utils.toBN(2)).add(
-            KING_PER_BLOCK.mul(minWithdrawInterval)
-                .mul(LP_TOKEN_AMOUNT)
-                .div((await this.kingUniV2.totalSupply()))).toString());
+        assert.equal((await this.king.balanceOf(bob)).toString(), LP_TOKEN_AMOUNT.mul(await this.kingUniV2.accKingPerShare())
+                .div(web3.utils.toBN("1000000000000")));
         assert.equal((await this.uniToken.balanceOf(bob)).gt(web3.utils.toBN(0)), true);
     });
 
