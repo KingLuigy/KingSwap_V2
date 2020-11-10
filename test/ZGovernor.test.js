@@ -29,9 +29,9 @@ contract('Governor', ([alice, minter, dev]) => {
         await this.archbishop.deposit(0, '100', {from: minter});
         // Perform another deposit to make sure some $KINGs are minted in that 1 block.
         await this.archbishop.deposit(0, '100', {from: minter});
-        assert.equal((await this.king.totalSupply()).toString(), '1066');
-        assert.equal((await this.king.balanceOf(minter)).valueOf(), '1000');
-        assert.equal((await this.king.balanceOf(dev)).valueOf(), '66');
+        assert.equal((await this.king.totalSupply()).toString(), '10000');
+        assert.equal((await this.king.balanceOf(minter)).valueOf(), '6400');
+        assert.equal((await this.king.balanceOf(dev)).valueOf(), '3600');
         // Transfer ownership to timelock contract
         this.timelock = await Timelock.new(alice, time.duration.days(2), {from: alice});
         this.gov = await GovernorAlpha.new(this.timelock.address, this.king.address, alice, {from: alice});
