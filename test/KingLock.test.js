@@ -19,15 +19,15 @@ contract('KingLock', ([alice, bob, carol]) => {
         await time.advanceBlockTo(`${this.testStartBlock + 8}`);
         await this.kingLock.deposit('0', { from: alice });
         await time.advanceBlockTo(`${this.testStartBlock + 10}`);
-        assert.equal((await this.bishop.pendingKing(0, this.kingLock.address)).valueOf(), '1000');
+        assert.equal((await this.bishop.pendingKing(0, this.kingLock.address)).valueOf(), '6400');
         await this.kingLock.withdrawFromArchbishop('0', { from: alice });
-        assert.equal(await this.king.balanceOf(this.kingLock.address).valueOf(), '2000');
+        assert.equal((await this.king.balanceOf(this.kingLock.address)).valueOf(), '12800');
 
         await this.kingLock.setwithdrawContractAddr(carol);
-        assert.equal(await this.kingLock.withDrawAddr().valueOf(), carol);
+        assert.equal((await this.kingLock.withDrawAddr()).valueOf(), carol);
 
         await this.kingLock.withdrawToContract(50);
-        assert.equal(await this.king.balanceOf(this.kingLock.address).valueOf(), '1950');
-        assert.equal(await this.king.balanceOf(carol).valueOf(), '50');
+        assert.equal((await this.king.balanceOf(this.kingLock.address)).valueOf(), '12750');
+        assert.equal((await this.king.balanceOf(carol)).valueOf(), '50');
     });
 })
