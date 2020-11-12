@@ -25,8 +25,13 @@ contract KingSwapPair is KingSwapERC20 {
     uint256 public constant UQ112 = 2**112;
 
     address public factory;
-    address public token0;
+
+    address public token0; // shares single storage slot with lockedIn0
+    bool public lockedIn0; // if set, token0 gets locked in the contract
+
     address public token1;
+    bool public lockedIn1;
+
     KingSwapSlippageToken public stoken;
 
     uint224 private virtualPrice; // token0 virtual price, uses single storage slot
@@ -75,6 +80,7 @@ contract KingSwapPair is KingSwapERC20 {
         address indexed to
     );
     event Sync(uint112 reserve0, uint112 reserve1);
+    event Lock(bool lockedIn0, bool lockedIn1);
 
     constructor() public {
         factory = msg.sender;
@@ -86,6 +92,13 @@ contract KingSwapPair is KingSwapERC20 {
         token0 = _token0;
         token1 = _token1;
         stoken = new KingSwapSlippageToken(0);
+    }
+
+    function lockIn(bool _lockedIn0, bool _lockedIn1) external {
+        require(msg.sender == factory, "KingSwap: FORBIDDEN");
+        lockedIn0 = _lockedIn0;
+        lockedIn1 = _lockedIn1;
+        emit Lock(lockedIn0, lockedIn1);
     }
 
     // update reserves and, on the first call per block, price accumulators
@@ -205,10 +218,17 @@ contract KingSwapPair is KingSwapERC20 {
         uint256 balance0;
         uint256 balance1;
         {
-            // scope for _token{0,1}, avoids stack too deep errors
-            address _token0 = token0;
-            address _token1 = token1;
+            // scope for _token{0,1} and _lockedIn{0,1}, avoids stack too deep errors
+            (address _token0, bool _lockedIn0) = _getTokenAndLocks0();  // gas savings
+            (address _token1, bool _lockedIn1) = _getTokenAndLocks1();
             require(to != _token0 && to != _token1, "KingSwap: INVALID_TO");
+
+            // revert if a token is locked in the contract
+            require(
+                (!_lockedIn1 || amount0Out == 0) && (!_lockedIn1 || amount1Out == 0),
+                "KingSwap: TOKEN_LOCKED_IN"
+            );
+
             if (amount0Out > 0) _safeTransfer(_token0, to, amount0Out); // optimistically transfer tokens
             if (amount1Out > 0) _safeTransfer(_token1, to, amount1Out); // optimistically transfer tokens
             if (data.length > 0) IKingSwapCallee(to).KingSwapCall(msg.sender, amount0Out, amount1Out, data);
@@ -232,6 +252,14 @@ contract KingSwapPair is KingSwapERC20 {
         _update(balance0, balance1, _reserve0, _reserve1);
 
         emit Swap(msg.sender, amount0In, amount1In, amount0Out, amount1Out, to);
+    }
+
+    function _getTokenAndLocks0() private view returns (address, bool) {
+        return (token0, lockedIn0);
+    }
+
+    function _getTokenAndLocks1() private view returns (address, bool) {
+        return (token1, lockedIn1);
     }
 
     function _getToken0MarketPrice() internal view returns (uint256 price) {

@@ -28,7 +28,7 @@ library KingSwapLibrary {
                         hex'ff',
                         factory,
                         keccak256(abi.encodePacked(token0, token1)),
-                        hex'0d73bd6a1195693388f60ba8038bf721ad14f3ef0a4851bfd6a90db0163829d7' // init code hash
+                        hex'67667857e7442c538a87a69597e7b774ae149bc134b97f2faf334e11f12b7db9' // init code hash
                     )
                 )
             )

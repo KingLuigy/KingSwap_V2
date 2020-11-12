@@ -1,6 +1,6 @@
 'use strict';
 
-var HDWalletProvider = require("@truffle/hdwallet-provider")
+const HDWalletProvider = require("@truffle/hdwallet-provider")
 
 const isCoverage = process.env.COVERAGE === 'true'
 
@@ -11,7 +11,7 @@ module.exports = {
       host: 'localhost',
       port: 8545,
       gas: 6999999,
-      gasPrice: 1 * 1000000000,
+      gasPrice: 1000000000,
       network_id: '*'
     },
 
@@ -67,21 +67,19 @@ module.exports = {
 
   plugins: ["solidity-coverage"],
 
+  fix_paths: true,
   compilers: {
     solc: {
       version: "0.6.12",
       docker: false,
+      parser: "solcjs",
       settings: {
-        evmVersion: 'constantinpole'
-      }
-    }
-  },
-
-  // optimization breaks code coverage
-  solc: {
-    optimizer: {
-      enabled: !isCoverage,
-      runs: 200
+        evmVersion: 'istanbul',
+        optimizer: {
+          enabled: !isCoverage,
+          runs: 200
+        },
+      },
     }
   },
 

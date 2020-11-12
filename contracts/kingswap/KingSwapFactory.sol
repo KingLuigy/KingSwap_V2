@@ -53,4 +53,13 @@ contract KingSwapFactory {
         require(msg.sender == feeToSetter, "KingSwap: FORBIDDEN");
         migrator = _migrator;
     }
+
+    function lockInPair(address tokenA, address tokenB, bool lockedInA, bool lockedInB) external {
+        require(msg.sender == feeToSetter, "KingSwap: FORBIDDEN");
+
+        (address token0, address token1, bool lock0, bool lock1) = tokenA < tokenB
+            ? (tokenA, tokenB, lockedInA, lockedInB)
+            : (tokenB, tokenA, lockedInB, lockedInA);
+        KingSwapPair(getPair[token0][token1]).lockIn(lock0, lock1);
+    }
 }
