@@ -225,7 +225,7 @@ contract KingSwapPair is KingSwapERC20 {
 
             // revert if a token is locked in the contract
             require(
-                (!_lockedIn1 || amount0Out == 0) && (!_lockedIn1 || amount1Out == 0),
+                (!_lockedIn0 || amount0Out == 0) && (!_lockedIn1 || amount1Out == 0),
                 "KingSwap: TOKEN_LOCKED_IN"
             );
 
