@@ -38,4 +38,41 @@ contract('KingDrinker', ([alice, bob]) => {
         assert.equal(await this.uni.balanceOf(this.drinker.address), '0');
         assert.equal(await this.king.balanceOf(this.blackHoldAddress), '996');
     });
+
+    context('KingSwapPair::lockIn', () => {
+        beforeEach(async () => {
+            // add liquidity
+            await this.king.transfer(this.kinguni.address, '100000', { from: alice });
+            await this.uni.transfer(this.kinguni.address, '100000', { from: alice });
+            await this.kinguni.sync();
+            await this.king.transfer(this.kinguni.address, '10000000', { from: alice });
+            await this.uni.transfer(this.kinguni.address, '10000000', { from: alice });
+            await this.kinguni.mint(alice);
+            await this.uni.transfer(this.drinker.address, '1000');
+        });
+
+        it('should be able to convert uni to king no pair route is locked', async () => {
+            await this.factory.lockInPair(this.king.address, this.uni.address, false, false);
+            await this.drinker.convert();
+            assert.equal(await this.uni.balanceOf(this.drinker.address), '0');
+            assert.equal(await this.king.balanceOf(this.blackHoldAddress), '996');
+        });
+
+        it('should not be able to convert uni to king when uni -> king pair route is locked', async () => {
+            await this.factory.lockInPair(this.king.address, this.uni.address, true, false);
+            await expectRevert(this.drinker.convert(), 'KingSwap: TOKEN_LOCKED_IN.');
+        });
+
+        it('should be able to convert uni to king when king -> uni pair route is locked', async () => {
+            await this.factory.lockInPair(this.king.address, this.uni.address, false, true);
+            await this.drinker.convert();
+            assert.equal(await this.uni.balanceOf(this.drinker.address), '0');
+            assert.equal(await this.king.balanceOf(this.blackHoldAddress), '996');
+        });
+
+        it('should not be able to convert uni to king when both pair routes are locked', async () => {
+            await this.factory.lockInPair(this.king.address, this.uni.address, true, true);
+            await expectRevert(this.drinker.convert(), 'KingSwap: TOKEN_LOCKED_IN.');
+        });
+    });
 })
