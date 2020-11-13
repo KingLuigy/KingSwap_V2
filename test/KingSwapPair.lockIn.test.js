@@ -20,121 +20,97 @@ contract('KingSwapPair::lockIn', ([alice, bob]) => {
     });
 
     context('lockedIn0 == true && lockedIn1 == false', () => {
-        it('Should allow swap on: (lockedIn0 && !lockedIn1) && (amount0Out == 0 && amount1Out != 0)', async () => {
+        beforeEach(async () => {
             const token0 = await this.pair.token0.call();
             const token1 = await this.pair.token1.call();
             await this.factory.lockInPair(token0, token1, true, false);
+        });
+
+        it('Should allow swap on: (amount0Out == 0 && amount1Out != 0)', async () => {
             await this.pair.swap('0', '10', alice, []);
         });
     
-        xit('Should forbid swap on: (lockedIn0 && !lockedIn1) && (amount0Out == 0 && amount1Out == 0)', async () => {
-            const token0 = await this.pair.token0.call();
-            const token1 = await this.pair.token1.call();
-            await this.factory.lockInPair(token0, token1, true, false);
+        xit('Should forbid swap on: (amount0Out == 0 && amount1Out == 0)', async () => {
             await expectRevert(this.pair.swap('0', '0', alice, []), 'Reason given: KingSwap: INSUFFICIENT_OUTPUT_AMOUNT');
         });
     
-        it('Should forbid swap on: (lockedIn0 && !lockedIn1) && (amount0Out != 0 && amount1Out != 0)', async () => {
-            const token0 = await this.pair.token0.call();
-            const token1 = await this.pair.token1.call();
-            await this.factory.lockInPair(token0, token1, true, false);
+        it('Should forbid swap on: (amount0Out != 0 && amount1Out != 0)', async () => {
             await expectRevert(this.pair.swap('10', '10', alice, []), 'Reason given: KingSwap: TOKEN_LOCKED_IN');
         });
     
-        it('Should forbid swap on: (lockedIn0 && !lockedIn1) && (amount0Out != 0 && amount1Out == 0)', async () => {
-            const token0 = await this.pair.token0.call();
-            const token1 = await this.pair.token1.call();
-            await this.factory.lockInPair(token0, token1, true, false);
+        it('Should forbid swap on: (amount0Out != 0 && amount1Out == 0)', async () => {
             await expectRevert(this.pair.swap('10', '0', alice, []), 'Reason given: KingSwap: TOKEN_LOCKED_IN');
         });
     });
 
     context('lockedIn0 == true && lockedIn1 == true', () => {
-        it('Should forbid swap on: (lockedIn0 && lockedIn1) && (amount0Out == 0 && amount1Out != 0)', async () => {
+        beforeEach(async () => {
             const token0 = await this.pair.token0.call();
             const token1 = await this.pair.token1.call();
             await this.factory.lockInPair(token0, token1, true, true);
+        });
+
+        it('Should forbid swap on: (amount0Out == 0 && amount1Out != 0)', async () => {
             await expectRevert(this.pair.swap('0', '10', alice, []), 'Reason given: KingSwap: TOKEN_LOCKED_IN');
         });
     
-        xit('Should forbid swap on: (lockedIn0 && lockedIn1) && (amount0Out == 0 && amount1Out == 0)', async () => {
-            const token0 = await this.pair.token0.call();
-            const token1 = await this.pair.token1.call();
-            await this.factory.lockInPair(token0, token1, true, true);
+        xit('Should forbid swap on: (amount0Out == 0 && amount1Out == 0)', async () => {
             await expectRevert(this.pair.swap('0', '0', alice, []), 'KingSwap: INSUFFICIENT_OUTPUT_AMOUNT');
         });
     
-        it('Should forbid swap on: (lockedIn0 && lockedIn1) && (amount0Out != 0 && amount1Out != 0)', async () => {
-            const token0 = await this.pair.token0.call();
-            const token1 = await this.pair.token1.call();
-            await this.factory.lockInPair(token0, token1, true, true);
+        it('Should forbid swap on: (amount0Out != 0 && amount1Out != 0)', async () => {
             await expectRevert(this.pair.swap('10', '10', alice, []), 'Reason given: KingSwap: TOKEN_LOCKED_IN');
         });
     
-        it('Should forbid swap on: (lockedIn0 && lockedIn1) && (amount0Out != 0 && amount1Out == 0)', async () => {
-            const token0 = await this.pair.token0.call();
-            const token1 = await this.pair.token1.call();
-            await this.factory.lockInPair(token0, token1, true, true);
+        it('Should forbid swap on: (amount0Out != 0 && amount1Out == 0)', async () => {
             await expectRevert(this.pair.swap('10', '0', alice, []), 'Reason given: KingSwap: TOKEN_LOCKED_IN');
         });
     });
 
     context('lockedIn0 == false && lockedIn1 == false', () => {
-        it('Should allow swap on: (!lockedIn0 && !lockedIn1) && (amount0Out == 0 && amount1Out != 0)', async () => {
+        beforeEach(async () => {
             const token0 = await this.pair.token0.call();
             const token1 = await this.pair.token1.call();
             await this.factory.lockInPair(token0, token1, false, false);
+        });
+
+        it('Should allow swap on: (amount0Out == 0 && amount1Out != 0)', async () => {
             await this.pair.swap('0', '10', alice, []);
         });
     
-        xit('Should forbid swap on: (!lockedIn0 && !lockedIn1) && (amount0Out == 0 && amount1Out == 0)', async () => {
-            const token0 = await this.pair.token0.call();
-            const token1 = await this.pair.token1.call();
-            await this.factory.lockInPair(token0, token1, false, false);
+        xit('Should forbid swap on: (amount0Out == 0 && amount1Out == 0)', async () => {
             await expectRevert(this.pair.swap('0', '0', alice, []), 'KingSwap: INSUFFICIENT_OUTPUT_AMOUNT');
         });
     
-        it('Should allow swap on: (!lockedIn0 && !lockedIn1) && (amount0Out != 0 && amount1Out != 0)', async () => {
-            const token0 = await this.pair.token0.call();
-            const token1 = await this.pair.token1.call();
-            await this.factory.lockInPair(token0, token1, false, false);
+        it('Should allow swap on: (amount0Out != 0 && amount1Out != 0)', async () => {
             await this.pair.swap('10', '10', alice, []);
         });
     
-        it('Should allow swap on: (!lockedIn0 && !lockedIn1) && (amount0Out != 0 && amount1Out == 0)', async () => {
-            const token0 = await this.pair.token0.call();
-            const token1 = await this.pair.token1.call();
-            await this.factory.lockInPair(token0, token1, false, false);
+        it('Should allow swap on: (amount0Out != 0 && amount1Out == 0)', async () => {
             await this.pair.swap('10', '0', alice, []);
         });
     });
 
     context('lockedIn0 == false && lockedIn1 == true', () => {
-        it('Should forbid swap on: (!lockedIn0 && lockedIn1) && (amount0Out == 0 && amount1Out != 0)', async () => {
+        beforeEach(async () => {
             const token0 = await this.pair.token0.call();
             const token1 = await this.pair.token1.call();
             await this.factory.lockInPair(token0, token1, false, true);
+        });
+
+        it('Should forbid swap on: (amount0Out == 0 && amount1Out != 0)', async () => {
             await expectRevert(this.pair.swap('0', '10', alice, []), 'KingSwap: TOKEN_LOCKED_IN');
         });
     
-        xit('Should forbid swap on: (!lockedIn0 && lockedIn1) && (amount0Out == 0 && amount1Out == 0)', async () => {
-            const token0 = await this.pair.token0.call();
-            const token1 = await this.pair.token1.call();
-            await this.factory.lockInPair(token0, token1, false, true);
+        xit('Should forbid swap on: (amount0Out == 0 && amount1Out == 0)', async () => {
             await expectRevert(this.pair.swap('0', '0', alice, []), 'KingSwap: INSUFFICIENT_OUTPUT_AMOUNT');
         });
     
-        it('Should forbid swap on: (!lockedIn0 && lockedIn1) && (amount0Out != 0 && amount1Out != 0)', async () => {
-            const token0 = await this.pair.token0.call();
-            const token1 = await this.pair.token1.call();
-            await this.factory.lockInPair(token0, token1, false, true);
+        it('Should forbid swap on: (amount0Out != 0 && amount1Out != 0)', async () => {
             await expectRevert(this.pair.swap('10', '10', alice, []), 'KingSwap: TOKEN_LOCKED_IN');
         });
     
-        it('Should allow swap on: (!lockedIn0 && lockedIn1) && (amount0Out != 0 && amount1Out == 0)', async () => {
-            const token0 = await this.pair.token0.call();
-            const token1 = await this.pair.token1.call();
-            await this.factory.lockInPair(token0, token1, false, true);
+        it('Should allow swap on: (amount0Out != 0 && amount1Out == 0)', async () => {
             await this.pair.swap('10', '0', alice, []);
         });
     });
