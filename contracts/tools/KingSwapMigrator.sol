@@ -32,6 +32,7 @@ interface IFactory {
 
 // Migrate from SUSHISWAP/UNISWAP to KINGSWAP
 contract KingSwapMigrator {
+    // TODO: update KingSwap addresses
     IFactory public uniFactory = IFactory(0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f);
     IRouter public uniRouter = IRouter(0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D);
     IFactory public sushiFactory = IFactory(0xC0AEe478e3658e2610c5F7A4A2E1777cE9e4f2Ac);

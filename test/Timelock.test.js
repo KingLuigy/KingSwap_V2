@@ -63,30 +63,30 @@ contract('Timelock', ([alice, bob, carol, dev, minter]) => {
     it('should also work with Archbishop', async () => {
         this.lp1 = await MockERC20.new('LPToken', 'LP', '10000000000', { from: minter });
         this.lp2 = await MockERC20.new('LPToken', 'LP', '10000000000', { from: minter });
-        this.chef = await Archbishop.new(this.king.address, dev, '1000', '0', { from: alice });
-        await this.king.transferOwnership(this.chef.address, { from: alice });
-        await this.chef.add('100', this.lp1.address, true);
-        await this.chef.transferOwnership(this.timelock.address, { from: alice });
+        this.bishop = await Archbishop.new(this.king.address, dev, '1000', '0', { from: alice });
+        await this.king.transferOwnership(this.bishop.address, { from: alice });
+        await this.bishop.add('100', this.lp1.address, true);
+        await this.bishop.transferOwnership(this.timelock.address, { from: alice });
         const eta = (await time.latest()).add(time.duration.days(4));
         await this.timelock.queueTransaction(
-            this.chef.address, '0', 'set(uint256,uint256,bool)',
+            this.bishop.address, '0', 'set(uint256,uint256,bool)',
             encodeParameters(['uint256', 'uint256', 'bool'], ['0', '200', false]), eta, { from: bob },
         );
         await this.timelock.queueTransaction(
-            this.chef.address, '0', 'add(uint256,address,bool)',
+            this.bishop.address, '0', 'add(uint256,address,bool)',
             encodeParameters(['uint256', 'address', 'bool'], ['100', this.lp2.address, false]), eta, { from: bob },
         );
         await time.increase(time.duration.days(4));
         await this.timelock.executeTransaction(
-            this.chef.address, '0', 'set(uint256,uint256,bool)',
+            this.bishop.address, '0', 'set(uint256,uint256,bool)',
             encodeParameters(['uint256', 'uint256', 'bool'], ['0', '200', false]), eta, { from: bob },
         );
         await this.timelock.executeTransaction(
-            this.chef.address, '0', 'add(uint256,address,bool)',
+            this.bishop.address, '0', 'add(uint256,address,bool)',
             encodeParameters(['uint256', 'address', 'bool'], ['100', this.lp2.address, false]), eta, { from: bob },
         );
-        assert.equal((await this.chef.poolInfo('0')).valueOf().allocPoint, '200');
-        assert.equal((await this.chef.totalAllocPoint()).valueOf(), '300');
-        assert.equal((await this.chef.poolLength()).valueOf(), '2');
+        assert.equal((await this.bishop.poolInfo('0')).valueOf().allocPoint, '200');
+        assert.equal((await this.bishop.totalAllocPoint()).valueOf(), '300');
+        assert.equal((await this.bishop.poolLength()).valueOf(), '2');
     });
 });

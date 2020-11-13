@@ -10,6 +10,7 @@ import "../kingswap/libraries/SafeMath.sol";
 
 contract KingSwapBatchTrade {
     using SafeMath for uint256;
+    // TODO: update KingSwap addresses
     IKingSwapFactory public factory = IKingSwapFactory(0x75e48C954594d64ef9613AeEF97Ad85370F13807);
     IKingSwapRouter public router = IKingSwapRouter(0x9C578b573EdE001b95d51a55A3FAfb45f5608b1f);
     address public weth = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;

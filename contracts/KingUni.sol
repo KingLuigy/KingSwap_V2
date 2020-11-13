@@ -252,7 +252,7 @@ contract KingUni is Ownable {
             _safeUniTransfer(msg.sender, uniToUser);
         }
         if (_amount > 0) {
-            pool.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);
+            pool.lpToken.safeTransferFrom(msg.sender, address(this), _amount);
             pool.lpToken.approve(address(pool.uniStaking), _amount);
             pool.uniStaking.stake(_amount);
         }
