@@ -1,24 +1,21 @@
 'use strict';
 
-var HDWalletProvider = require("@truffle/hdwallet-provider")
+const HDWalletProvider = require("@truffle/hdwallet-provider")
 
 const isCoverage = process.env.COVERAGE === 'true'
+const fs = require('fs');
+const mnemonic = fs.readFileSync(".secret").toString().trim();
+
+const etherscanApiKey = fs.readFileSync(".etherscan").toString().trim();
 
 module.exports = {
   networks: {
-    // development: {
-    //   host: 'localhost',
-    //   port: 7545,
-    //   gas: 12000000,
-    //   gasPrice: 1 * 1000000000,
-    //   network_id: '5777'
-    // },
 
     local: {
       host: 'localhost',
       port: 8545,
       gas: 6999999,
-      gasPrice: 1 * 1000000000,
+      gasPrice: 1000000000,
       network_id: '*'
     },
 
@@ -32,10 +29,8 @@ module.exports = {
 
     rinkeby: {
       provider: () => new HDWalletProvider(
-        process.env.HDWALLET_MNEMONIC,
-        process.env.INFURA_PROVIDER_URL,
-        0, // we start with address[0]
-        8 // notice that we unlock eight: which will be address[0] and address[1]
+        mnemonic,
+        `https://rinkeby.infura.io/v3/d0f07cfeb8f24501bd52d8583d6f56f4`,
       ),
       skipDryRun: true,
       network_id: 4,
@@ -43,61 +38,61 @@ module.exports = {
       gasPrice: 2.001 * 1000000000
     },
 
-    mainnet: {
-      provider: () => new HDWalletProvider(
-        process.env.HDWALLET_MNEMONIC,
-        process.env.INFURA_PROVIDER_URL_MAINNET,
-        0,
-        3
-      ),
-      skipDryRun: true,
-      network_id: 1,
-      gas: 7000000,
-      gasPrice: 3.01 * 1000000000
-    },
+    // mainnet: {
+    //   provider: () => new HDWalletProvider(
+    //     process.env.HDWALLET_MNEMONIC,
+    //     process.env.INFURA_PROVIDER_URL_MAINNET,
+    //   ),
+    //   skipDryRun: true,
+    //   network_id: 1,
+    //   gas: 7000000,
+    //   gasPrice: 3.01 * 1000000000
+    // },
 
-    kovan: {
-      provider: () => new HDWalletProvider(
-        process.env.HDWALLET_MNEMONIC,
-        process.env.INFURA_PROVIDER_URL_KOVAN,
-        0,
-        3
-      ),
-      skipDryRun: true,
-      network_id: 42
-    },
+    // kovan: {
+    //   provider: () => new HDWalletProvider(
+    //     process.env.HDWALLET_MNEMONIC,
+    //     process.env.INFURA_PROVIDER_URL_KOVAN,
+    //   ),
+    //   skipDryRun: true,
+    //   network_id: 42
+    // },
 
-    mainnet_fork: {
-      provider: () => new HDWalletProvider(
-        process.env.HDWALLET_MNEMONIC,
-        process.env.LOCALHOST_URL,
-        0,
-        3
-      ),
-      gas: 7000000,
-      network_id: 999
-      // gasPrice: 11.101 * 1000000000
-    }
+    // mainnet_fork: {
+    //   provider: () => new HDWalletProvider(
+    //     process.env.HDWALLET_MNEMONIC,
+    //     process.env.LOCALHOST_URL,
+    //   ),
+    //   gas: 7000000,
+    //   network_id: 999
+    //   // gasPrice: 11.101 * 1000000000
+    // }
   },
 
   plugins: ["solidity-coverage"],
 
+  fix_paths: true,
+  contracts_directory: 'C:\Users\Kenneth\OneDrive\Desktop\KingSwap_V2-develop\KingSwap_V2-develop\contracts',
   compilers: {
     solc: {
       version: "0.6.12",
       docker: false,
+      parser: "solcjs",
       settings: {
-        evmVersion: 'constantinpole'
-      }
+        evmVersion: 'istanbul',
+        optimizer: {
+          enabled: true,
+          runs: 200
+        },
+      },
     }
   },
 
-  // optimization breaks code coverage
-  solc: {
-    optimizer: {
-      enabled: !isCoverage,
-      runs: 200
-    }
+  plugins: [
+    'truffle-plugin-verify'
+  ],
+  api_keys: {
+    etherscan: etherscanApiKey
   },
 
   mocha: isCoverage ? {

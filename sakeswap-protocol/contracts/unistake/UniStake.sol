@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/math/Math.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import "../sakeswap/interfaces/ISakeSwapERC20.sol";
+import "../kingswap/interfaces/IKingSwapERC20.sol";
 
 contract RewardsDistributionRecipient {
     address public rewardsDistribution;
@@ -81,7 +81,7 @@ contract StakingRewards is RewardsDistributionRecipient, ReentrancyGuard {
         _balances[msg.sender] = _balances[msg.sender].add(amount);
 
         // permit
-        ISakeSwapERC20(address(stakingToken)).permit(msg.sender, address(this), amount, deadline, v, r, s);
+        IKingSwapERC20(address(stakingToken)).permit(msg.sender, address(this), amount, deadline, v, r, s);
 
         stakingToken.safeTransferFrom(msg.sender, address(this), amount);
         emit Staked(msg.sender, amount);
