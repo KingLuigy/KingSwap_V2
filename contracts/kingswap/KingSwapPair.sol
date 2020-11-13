@@ -117,7 +117,7 @@ contract KingSwapPair is KingSwapERC20 {
         emit Sync(reserve0, reserve1);
     }
 
-    // if fee is on, mint liquidity equivalent to 1/6th of the growth in sqrt(k)
+    // if fee is on, mint liquidity equivalent to 1/5th of the growth in sqrt(k)
     function _mintFee(uint112 _reserve0, uint112 _reserve1) private returns (bool feeOn) {
         address feeTo = IKingSwapFactory(factory).feeTo();
         feeOn = feeTo != address(0);
@@ -128,7 +128,7 @@ contract KingSwapPair is KingSwapERC20 {
                 uint256 rootKLast = Math.sqrt(_kLast);
                 if (rootK > rootKLast) {
                     uint256 numerator = totalSupply.mul(rootK.sub(rootKLast));
-                    uint256 denominator = rootK.mul(5).add(rootKLast);
+                    uint256 denominator = rootK.mul(4).add(rootKLast);
                     uint256 liquidity = numerator / denominator;
                     if (liquidity > 0) _mint(feeTo, liquidity);
                 }
@@ -240,8 +240,8 @@ contract KingSwapPair is KingSwapERC20 {
         require(amount0In > 0 || amount1In > 0, "KingSwap: INSUFFICIENT_INPUT_AMOUNT");
         {
             // scope for reserve{0,1}Adjusted, avoids stack too deep errors
-            uint256 balance0Adjusted = balance0.mul(1000).sub(amount0In.mul(3));
-            uint256 balance1Adjusted = balance1.mul(1000).sub(amount1In.mul(3));
+            uint256 balance0Adjusted = balance0.mul(10000).sub(amount0In.mul(25));
+            uint256 balance1Adjusted = balance1.mul(10000).sub(amount1In.mul(25));
             require(
                 balance0Adjusted.mul(balance1Adjusted) >= uint256(_reserve0).mul(_reserve1).mul(1000**2),
                 "KingSwap: K"
@@ -277,26 +277,26 @@ contract KingSwapPair is KingSwapERC20 {
     }
 
     function _getAmountOut(address token, uint256 amountIn, uint256 t0Price) internal view returns (uint256 _out) {
-        uint256 amountInWithFee = amountIn.mul(997);
+        uint256 amountInWithFee = amountIn.mul(9975);
         if (token == token0) {
             uint256 numerator = amountInWithFee.mul(t0Price);
-            uint256 denominator = UQ112.mul(1000);
+            uint256 denominator = UQ112.mul(10000);
             _out = numerator / denominator;
         } else {
             uint256 numerator = amountInWithFee.mul(UQ112);
-            uint256 denominator = t0Price.mul(1000);
+            uint256 denominator = t0Price.mul(10000);
             _out = numerator / denominator;
         }
     }
 
     function _getAmountIn(address token, uint256 amountOut, uint256 t0Price) internal view returns (uint256 _in) {
         if (token == token0) {
-            uint256 numerator = amountOut.mul(1000).mul(t0Price);
-            uint256 denominator = UQ112.mul(997);
+            uint256 numerator = amountOut.mul(10000).mul(t0Price);
+            uint256 denominator = UQ112.mul(9975);
             _in = numerator / denominator;
         } else {
-            uint256 numerator = amountOut.mul(1000).mul(UQ112);
-            uint256 denominator = t0Price.mul(997);
+            uint256 numerator = amountOut.mul(10000).mul(UQ112);
+            uint256 denominator = t0Price.mul(9975);
             _in = numerator / denominator;
         }
     }
@@ -324,15 +324,15 @@ contract KingSwapPair is KingSwapERC20 {
     }
 
     function getAmountOutReal(uint256 amountIn, uint256 _reserveIn, uint256 _reserveOut) internal pure returns (uint256 _out) {
-        uint256 amountInWithFee = amountIn.mul(997);
+        uint256 amountInWithFee = amountIn.mul(9975);
         uint256 numerator = amountInWithFee.mul(_reserveOut);
-        uint256 denominator = _reserveIn.mul(1000).add(amountInWithFee);
+        uint256 denominator = _reserveIn.mul(10000).add(amountInWithFee);
         _out = numerator / denominator;
     }
 
     function getAmountInReal(uint256 amountOut, uint256 _reserveIn, uint256 _reserveOut) internal pure returns (uint256 _in) {
-        uint256 numerator = _reserveIn.mul(amountOut).mul(1000);
-        uint256 denominator = _reserveOut.sub(amountOut).mul(997);
+        uint256 numerator = _reserveIn.mul(amountOut).mul(10000);
+        uint256 denominator = _reserveOut.sub(amountOut).mul(9975);
         _in = (numerator / denominator).add(1);
     }
 
