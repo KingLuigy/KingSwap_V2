@@ -3,9 +3,9 @@ pragma solidity 0.6.12;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./kingswap/interfaces/IKingSwapERC20.sol";
-import "./kingswap/interfaces/IKingSwapPair.sol";
-import "./kingswap/interfaces/IKingSwapFactory.sol";
+import "./interfaces/IKingSwapERC20.sol";
+import "./interfaces/IKingSwapPair.sol";
+import "./interfaces/IKingSwapFactory.sol";
 
 contract KingServant is Ownable {
     using SafeMath for uint256;
@@ -14,11 +14,13 @@ contract KingServant is Ownable {
     address public table;
     address public king;
     address public weth;
-    uint8 public burnRatio = 3;
+    uint8 public burnRatio = 0;
 
     constructor(IKingSwapFactory _factory, address _table, address _king, address _weth) public {
-        require(address(_factory) != address(0) && _table != address(0) &&
-            _king != address(0) && _weth != address(0), "invalid address");
+        require(
+            address(_factory) != address(0) && _table != address(0) && _king != address(0) && _weth != address(0),
+            "invalid address"
+        );
         factory = _factory;
         king = _king;
         table = _table;
@@ -32,12 +34,14 @@ contract KingServant is Ownable {
         pair.transfer(address(pair), pair.balanceOf(address(this)));
         pair.burn(address(this));
         uint256 wethAmount = _toWETH(token0) + _toWETH(token1);
-        uint256 wethAmountToBurn = wethAmount.mul(burnRatio).div(10);
+        uint256 wethAmountToBurn = burnRatio == 0 ? 0 : wethAmount.mul(burnRatio).div(10);
         uint256 wethAmountOnTable = wethAmount.sub(wethAmountToBurn);
         IERC20(weth).transfer(factory.getPair(weth, king), wethAmountOnTable);
         _toKING(wethAmountOnTable, table);
-        IERC20(weth).transfer(factory.getPair(weth, king), wethAmountToBurn);
-        _toKING(wethAmountToBurn, address(1));
+        if (wethAmountToBurn != 0) {
+            IERC20(weth).transfer(factory.getPair(weth, king), wethAmountToBurn);
+            _toKING(wethAmountToBurn, address(1));
+        }
     }
 
     function _toWETH(address token) internal returns (uint256) {

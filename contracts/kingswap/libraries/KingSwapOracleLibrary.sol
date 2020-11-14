@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.6.0;
 
-import '../interfaces/IKingSwapPair.sol';
+import '../../interfaces/IKingSwapPair.sol';
 import './FixedPoint.sol';
 
 // library with helper methods for oracles that are concerned with computing average prices

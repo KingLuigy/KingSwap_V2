@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.6.0;
 
-import '../interfaces/IKingSwapPair.sol';
+import '../../interfaces/IKingSwapPair.sol';
 import './SafeMath.sol';
 
 library KingSwapLibrary {
@@ -28,7 +28,7 @@ library KingSwapLibrary {
                         hex'ff',
                         factory,
                         keccak256(abi.encodePacked(token0, token1)),
-                        hex'e7afcdee078e549bd1c601af9b2494fd6be1aeabd6758b4a044628e7198a19a2' // init code hash
+                        hex'b766a1c755935658001853a78ea8c0fff7929f287e3a93a2d64bbf31efe48ba2' // init code hash
                     )
                 )
             )

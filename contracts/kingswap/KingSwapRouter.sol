@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity =0.6.12;
 
-import "./interfaces/IKingSwapFactory.sol";
+import "../interfaces/IKingSwapFactory.sol";
 import "./libraries/TransferHelper.sol";
-import "./interfaces/IKingSwapRouter.sol";
+import "../interfaces/IKingSwapRouter.sol";
 import "./libraries/KingSwapLibrary.sol";
 import "./libraries/SafeMath.sol";
 import "./interfaces/IERC20.sol";
-import "./interfaces/IWETH.sol";
+import "../interfaces/IWETH.sol";
 
 contract KingSwapRouter is IKingSwapRouter {
     using SafeMath for uint256;

@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.6.12;
 
-import "../kingswap/interfaces/IKingSwapRouter.sol";
+import "../interfaces/IKingSwapRouter.sol";
 import "../kingswap/interfaces/IERC20.sol";
-import "../kingswap/interfaces/IWETH.sol";
-import "../kingswap/interfaces/IKingSwapFactory.sol";
-import "../kingswap/interfaces/IKingSwapPair.sol";
+import "../interfaces/IWETH.sol";
+import "../interfaces/IKingSwapFactory.sol";
+import "../interfaces/IKingSwapPair.sol";
 import "../kingswap/libraries/SafeMath.sol";
 
 contract KingSwapBatchTrade {

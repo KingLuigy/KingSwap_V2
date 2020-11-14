@@ -1,7 +1,7 @@
 pragma solidity 0.6.12;
 
-import "./kingswap/interfaces/IKingSwapPair.sol";
-import "./kingswap/interfaces/IKingSwapFactory.sol";
+import "./interfaces/IKingSwapPair.sol";
+import "./interfaces/IKingSwapFactory.sol";
 
 
 contract Migrator {

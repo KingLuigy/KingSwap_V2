@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/math/Math.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import "../kingswap/interfaces/IKingSwapERC20.sol";
+import "../interfaces/IKingSwapERC20.sol";
 
 contract RewardsDistributionRecipient {
     address public rewardsDistribution;

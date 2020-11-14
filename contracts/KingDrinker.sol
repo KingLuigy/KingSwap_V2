@@ -2,9 +2,9 @@ pragma solidity 0.6.12;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
-import "./kingswap/interfaces/IKingSwapERC20.sol";
-import "./kingswap/interfaces/IKingSwapPair.sol";
-import "./kingswap/interfaces/IKingSwapFactory.sol";
+import "./interfaces/IKingSwapERC20.sol";
+import "./interfaces/IKingSwapPair.sol";
+import "./interfaces/IKingSwapFactory.sol";
 
 contract KingDrinker {
     using SafeMath for uint;

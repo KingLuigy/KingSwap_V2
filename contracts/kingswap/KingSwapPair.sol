@@ -5,9 +5,9 @@ import "./KingSwapERC20.sol";
 import "./libraries/Math.sol";
 import "./libraries/UQ112x112.sol";
 import "./interfaces/IERC20.sol";
-import "./interfaces/IKingSwapFactory.sol";
+import "../interfaces/IKingSwapFactory.sol";
 import "./interfaces/IKingSwapCallee.sol";
-import "./interfaces/IKingSwapPair.sol";
+import "../interfaces/IKingSwapPair.sol";
 import "./KingSwapSlippageToken.sol";
 
 interface IMigrator {

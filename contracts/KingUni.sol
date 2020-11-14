@@ -7,16 +7,7 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./KingToken.sol";
 import "./interfaces/IMigratorChef.sol";
-
-// Uniswap Liquidity Mining
-interface IStakingRewards {
-    function earned(address account) external view returns (uint256);
-    function stake(uint256 amount) external;
-    function withdraw(uint256 amount) external;
-    function getReward() external;
-    function exit() external;
-    function balanceOf(address account) external view returns (uint256);
-}
+import "./interfaces/IStakingRewards.sol";
 
 contract KingUni is Ownable {
     using SafeMath for uint256;
