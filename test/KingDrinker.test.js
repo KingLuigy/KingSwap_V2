@@ -36,7 +36,7 @@ contract('KingDrinker', ([alice, bob]) => {
         await this.uni.transfer(this.drinker.address, '1000');
         await this.drinker.convert();
         assert.equal(await this.uni.balanceOf(this.drinker.address), '0');
-        assert.equal(await this.king.balanceOf(this.blackHoldAddress), '996');
+        assert.equal(await this.king.balanceOf(this.blackHoldAddress), '997');
     });
 
     context('KingSwapPair::lockIn', () => {
@@ -55,7 +55,7 @@ contract('KingDrinker', ([alice, bob]) => {
             await this.factory.lockInPair(this.king.address, this.uni.address, false, false);
             await this.drinker.convert();
             assert.equal(await this.uni.balanceOf(this.drinker.address), '0');
-            assert.equal(await this.king.balanceOf(this.blackHoldAddress), '996');
+            assert.equal(await this.king.balanceOf(this.blackHoldAddress), '997');
         });
 
         it('should not be able to convert uni to king when uni -> king pair route is locked', async () => {
@@ -67,7 +67,7 @@ contract('KingDrinker', ([alice, bob]) => {
             await this.factory.lockInPair(this.king.address, this.uni.address, false, true);
             await this.drinker.convert();
             assert.equal(await this.uni.balanceOf(this.drinker.address), '0');
-            assert.equal(await this.king.balanceOf(this.blackHoldAddress), '996');
+            assert.equal(await this.king.balanceOf(this.blackHoldAddress), '997');
         });
 
         it('should not be able to convert uni to king when both pair routes are locked', async () => {

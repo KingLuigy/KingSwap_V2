@@ -40,9 +40,9 @@ contract KingDrinker {
         // avoid stack too deep error
         uint amountOut;
         {
-            uint amountInWithFee = amountIn.mul(997);
+            uint amountInWithFee = amountIn.mul(9975);
             uint numerator = amountInWithFee.mul(reserveOut);
-            uint denominator = reserveIn.mul(1000).add(amountInWithFee);
+            uint denominator = reserveIn.mul(10000).add(amountInWithFee);
             amountOut = numerator / denominator;
         }
         (uint amount0Out, uint amount1Out) = token0 == uni ? (uint(0), amountOut) : (amountOut, uint(0));

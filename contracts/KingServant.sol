@@ -61,9 +61,9 @@ contract KingServant is Ownable {
         address token0 = pair.token0();
         (uint reserveIn, uint reserveOut) = token0 == token ? (reserve0, reserve1) : (reserve1, reserve0);
         uint amountIn = IERC20(token).balanceOf(address(this));
-        uint amountInWithFee = amountIn.mul(997);
+        uint amountInWithFee = amountIn.mul(9975);
         uint numerator = amountInWithFee.mul(reserveOut);
-        uint denominator = reserveIn.mul(1000).add(amountInWithFee);
+        uint denominator = reserveIn.mul(10000).add(amountInWithFee);
         uint amountOut = numerator / denominator;
         (uint amount0Out, uint amount1Out) = token0 == token ? (uint(0), amountOut) : (amountOut, uint(0));
         IERC20(token).transfer(address(pair), amountIn);
@@ -79,9 +79,9 @@ contract KingServant is Ownable {
         // avoid stack too deep error
         uint amountOut;
         {
-            uint amountInWithFee = amountIn.mul(997);
+            uint amountInWithFee = amountIn.mul(9975);
             uint numerator = amountInWithFee.mul(reserveOut);
-            uint denominator = reserveIn.mul(1000).add(amountInWithFee);
+            uint denominator = reserveIn.mul(10000).add(amountInWithFee);
             amountOut = numerator / denominator;
         }
         (uint amount0Out, uint amount1Out) = token0 == weth ? (uint(0), amountOut) : (amountOut, uint(0));

@@ -65,9 +65,9 @@ library KingSwapLibrary {
     ) internal pure returns (uint256 amountOut) {
         require(amountIn > 0, 'KingSwapLibrary: INSUFFICIENT_INPUT_AMOUNT');
         require(reserveIn > 0 && reserveOut > 0, 'KingSwapLibrary: INSUFFICIENT_LIQUIDITY');
-        uint256 amountInWithFee = amountIn.mul(997);
+        uint256 amountInWithFee = amountIn.mul(9975);
         uint256 numerator = amountInWithFee.mul(reserveOut);
-        uint256 denominator = reserveIn.mul(1000).add(amountInWithFee);
+        uint256 denominator = reserveIn.mul(10000).add(amountInWithFee);
         amountOut = numerator / denominator;
     }
 
@@ -79,8 +79,8 @@ library KingSwapLibrary {
     ) internal pure returns (uint256 amountIn) {
         require(amountOut > 0, 'KingSwapLibrary: INSUFFICIENT_OUTPUT_AMOUNT');
         require(reserveIn > 0 && reserveOut > 0, 'KingSwapLibrary: INSUFFICIENT_LIQUIDITY');
-        uint256 numerator = reserveIn.mul(amountOut).mul(1000);
-        uint256 denominator = reserveOut.sub(amountOut).mul(997);
+        uint256 numerator = reserveIn.mul(amountOut).mul(10000);
+        uint256 denominator = reserveOut.sub(amountOut).mul(9975);
         amountIn = (numerator / denominator).add(1);
     }
 

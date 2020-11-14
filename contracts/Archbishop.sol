@@ -71,7 +71,7 @@ contract Archbishop is Ownable {
     // Bonus muliplier for early king makers.
     uint256 public constant BONUS_MULTIPLIER = 10;
     // Bonus block num,about 15 days.
-    uint256 public constant BONUS_BLOCKNUM = 100000; // testing value = 200 real value = 100000
+    uint256 public constant BONUS_BLOCKNUM = 100000;
     // The migrator contract. It has a lot of power. Can only be set through governance (owner).
     IMigratorChef public migrator;
 
