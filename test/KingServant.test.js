@@ -28,7 +28,7 @@ contract('KingServant', ([alice, table, minter]) => {
     })
 
     it('should set burn ratio successfully', async () => {
-        assert.equal(await this.servant.burnRatio(), 3);
+        assert.equal(await this.servant.burnRatio(), 0);
         await this.servant.setBurnRatio(0, { from: alice });
         assert.equal(await this.servant.burnRatio(), 0);
         await this.servant.setBurnRatio(10, { from: alice });
@@ -62,8 +62,8 @@ contract('KingServant', ([alice, table, minter]) => {
         assert.equal((await this.token1Token2.balanceOf(this.servant.address)).valueOf(), '19841');
         // After calling convert, table should have $KING value at ~1/5 of revenue
         await this.servant.convert(this.token1.address, this.token2.address);
-        assert.equal((await this.king.balanceOf(table)).valueOf(), '27698');
-        assert.equal((await this.king.balanceOf(this.blackHoldAddress)).valueOf(), '11823');
+        assert.equal((await this.king.balanceOf(table)).valueOf(), '39561');
+        assert.equal((await this.king.balanceOf(this.blackHoldAddress)).valueOf(), '0');
         assert.equal((await this.token1Token2.balanceOf(this.servant.address)).valueOf(), '0');
         // Should also work for $KING-ETH pair
         await this.king.transfer(this.kingWETH.address, '100000', { from: minter });
@@ -72,10 +72,10 @@ contract('KingServant', ([alice, table, minter]) => {
         await this.king.transfer(this.kingWETH.address, '10000000', { from: minter });
         await this.weth.transfer(this.kingWETH.address, '10000000', { from: minter });
         await this.kingWETH.mint(minter);
-        assert.equal((await this.kingWETH.balanceOf(this.servant.address)).valueOf(), '19853');
+        assert.equal((await this.kingWETH.balanceOf(this.servant.address)).valueOf(), '19851');
         await this.servant.convert(this.king.address, this.weth.address);
-        assert.equal((await this.king.balanceOf(table)).valueOf(), '55661');
-        assert.equal((await this.king.balanceOf(this.blackHoldAddress)).valueOf(), '23801');
+        assert.equal((await this.king.balanceOf(table)).valueOf(), '79508');
+        assert.equal((await this.king.balanceOf(this.blackHoldAddress)).valueOf(), '0');
         assert.equal((await this.kingWETH.balanceOf(this.servant.address)).valueOf(), '0');
     });
 
@@ -105,8 +105,8 @@ contract('KingServant', ([alice, table, minter]) => {
         assert.equal((await this.token1Token2.balanceOf(this.servant.address)).valueOf(), '19841');
         // After calling convert, table should have $KING value at ~1/5 of revenue
         await this.servant.convert(this.token1.address, this.token2.address);
-        assert.equal((await this.king.balanceOf(table)).valueOf(), '19800');
-        assert.equal((await this.king.balanceOf(this.blackHoldAddress)).valueOf(), '19721');
+        assert.equal((await this.king.balanceOf(table)).valueOf(), '19819');
+        assert.equal((await this.king.balanceOf(this.blackHoldAddress)).valueOf(), '19741');
         assert.equal((await this.token1Token2.balanceOf(this.servant.address)).valueOf(), '0');
         // Should also work for $KING-ETH pair
         await this.king.transfer(this.kingWETH.address, '100000', { from: minter });
@@ -115,10 +115,10 @@ contract('KingServant', ([alice, table, minter]) => {
         await this.king.transfer(this.kingWETH.address, '10000000', { from: minter });
         await this.weth.transfer(this.kingWETH.address, '10000000', { from: minter });
         await this.kingWETH.mint(minter);
-        assert.equal((await this.kingWETH.balanceOf(this.servant.address)).valueOf(), '19853');
+        assert.equal((await this.kingWETH.balanceOf(this.servant.address)).valueOf(), '19851');
         await this.servant.convert(this.king.address, this.weth.address);
-        assert.equal((await this.king.balanceOf(table)).valueOf(), '39776');
-        assert.equal((await this.king.balanceOf(this.blackHoldAddress)).valueOf(), '39686');
+        assert.equal((await this.king.balanceOf(table)).valueOf(), '39798');
+        assert.equal((await this.king.balanceOf(this.blackHoldAddress)).valueOf(), '39709');
         assert.equal((await this.kingWETH.balanceOf(this.servant.address)).valueOf(), '0');
     })
 });
