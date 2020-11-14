@@ -117,7 +117,7 @@ contract('KingVoterCalc', ([alice, bob, carol, dev, admin, kingfee, kingMaker, m
         // //no change
         // console.log("get bob balanceOf4",(await this.KingVoterCalc.balanceOf(bob)).valueOf());
 
-         //test masterV2
+         //test archbishopV2
         this.tokenst1 = await MockERC20.new('ST1Token', 'TOKENST', TOTAL_SUPPLY, { from: minter });
         this.lpst1 = await KingSwapPair.at((await this.factory3.createPair(this.tokenst1.address, this.kingToken.address)).logs[0].args.pair);
         await this.tokenst1.transfer(this.lpst1.address, LP_SUPPLY, { from: minter });

@@ -1,0 +1,606 @@
+KingSwap_V2$ yarn test
+yarn run v1.22.4
+$ npx truffle test
+Using network 'test'.
+
+
+Compiling your contracts...
+===========================
+> Compiling ./contracts/Archbishop.sol
+> Compiling ./contracts/ArchbishopV2.sol
+> Compiling ./contracts/GovernorAlpha.sol
+> Compiling ./contracts/KingDrinker.sol
+> Compiling ./contracts/KingLock.sol
+> Compiling ./contracts/KingServant.sol
+> Compiling ./contracts/KingToken.sol
+> Compiling ./contracts/KingUni.sol
+> Compiling ./contracts/KingUniV2.sol
+> Compiling ./contracts/KingVoterCalc.sol
+> Compiling ./contracts/KingVoterProxy.sol
+> Compiling ./contracts/Migrations.sol
+> Compiling ./contracts/Migrator.sol
+> Compiling ./contracts/RoundTable.sol
+> Compiling ./contracts/STokenMaster.sol
+> Compiling ./contracts/Timelock.sol
+> Compiling ./contracts/interfaces/IKingSwapERC20.sol
+> Compiling ./contracts/interfaces/IKingSwapFactory.sol
+> Compiling ./contracts/interfaces/IKingSwapPair.sol
+> Compiling ./contracts/interfaces/IKingSwapRouter.sol
+> Compiling ./contracts/interfaces/IMigratorChef.sol
+> Compiling ./contracts/interfaces/IStakingRewards.sol
+> Compiling ./contracts/interfaces/IWETH.sol
+> Compiling ./contracts/kingswap/KingSwapERC20.sol
+> Compiling ./contracts/kingswap/KingSwapFactory.sol
+> Compiling ./contracts/kingswap/KingSwapPair.sol
+> Compiling ./contracts/kingswap/KingSwapRouter.sol
+> Compiling ./contracts/kingswap/KingSwapSlippageToken.sol
+> Compiling ./contracts/kingswap/interfaces/IERC20.sol
+> Compiling ./contracts/kingswap/interfaces/IKingSwapCallee.sol
+> Compiling ./contracts/kingswap/libraries/AddressStringUtil.sol
+> Compiling ./contracts/kingswap/libraries/Babylonian.sol
+> Compiling ./contracts/kingswap/libraries/FixedPoint.sol
+> Compiling ./contracts/kingswap/libraries/KingSwapLibrary.sol
+> Compiling ./contracts/kingswap/libraries/KingSwapOracleLibrary.sol
+> Compiling ./contracts/kingswap/libraries/Math.sol
+> Compiling ./contracts/kingswap/libraries/PairNamer.sol
+> Compiling ./contracts/kingswap/libraries/SafeERC20Namer.sol
+> Compiling ./contracts/kingswap/libraries/SafeMath.sol
+> Compiling ./contracts/kingswap/libraries/TransferHelper.sol
+> Compiling ./contracts/kingswap/libraries/UQ112x112.sol
+> Compiling ./contracts/test/AddressStringUtilWrapper.sol
+> Compiling ./contracts/test/MockERC20.sol
+> Compiling ./contracts/test/SafeERC20NamerWrapper.sol
+> Compiling ./contracts/test/WETH9.sol
+> Compiling ./contracts/tools/KingSwapBatchTrade.sol
+> Compiling ./contracts/tools/KingSwapMigrator.sol
+> Compiling ./contracts/unistake/UniStake.sol
+> Compiling @openzeppelin/contracts/GSN/Context.sol
+> Compiling @openzeppelin/contracts/access/Ownable.sol
+> Compiling @openzeppelin/contracts/math/Math.sol
+> Compiling @openzeppelin/contracts/math/SafeMath.sol
+> Compiling @openzeppelin/contracts/token/ERC20/ERC20.sol
+> Compiling @openzeppelin/contracts/token/ERC20/IERC20.sol
+> Compiling @openzeppelin/contracts/token/ERC20/SafeERC20.sol
+> Compiling @openzeppelin/contracts/utils/Address.sol
+> Compiling @openzeppelin/contracts/utils/EnumerableSet.sol
+> Compiling @openzeppelin/contracts/utils/ReentrancyGuard.sol
+> Compilation warnings encountered:
+
+    contracts/ArchbishopV2.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,contracts/GovernorAlpha.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,contracts/KingDrinker.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,contracts/KingLock.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,contracts/KingServant.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,contracts/KingUni.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,contracts/KingUniV2.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,contracts/Migrator.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,contracts/RoundTable.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,contracts/STokenMaster.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,contracts/Timelock.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,contracts/interfaces/IMigratorChef.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,contracts/interfaces/IStakingRewards.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,contracts/test/MockERC20.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,contracts/unistake/UniStake.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+,contracts/KingToken.sol:284:5: Warning: Documentation tag on non-public state variables will be disallowed in 0.7.0. You will need to use the @dev tag explicitly.
+    /// @notice A record of each accounts delegate
+    ^--------------------------------------------^
+
+> Artifacts written to /tmp/test--6717-MrpbeEeiJb6c
+> Compiled successfully using:
+   - solc: 0.6.12+commit.27d51765.Emscripten.clang
+
+
+> Duplicate contract names found for IMigratorChef.
+> This can cause errors and unknown behavior. Please rename one of your contracts.
+
+> Duplicate contract names found for IERC20.
+> This can cause errors and unknown behavior. Please rename one of your contracts.
+
+> Duplicate contract names found for Math.
+> This can cause errors and unknown behavior. Please rename one of your contracts.
+
+> Duplicate contract names found for SafeMath.
+> This can cause errors and unknown behavior. Please rename one of your contracts.
+
+  Contract: Archbishop
+    ✓ should set correct state variables (2154529 gas)
+    ✓ should allow stakeholder and only stakeholder to update stakeholder (2203069 gas)
+    With ERC/LP token added to the field
+      ✓ should allow emergency withdraw (2455970 gas)
+      ✓ should give out $KINGs only after farming time (2933036 gas)
+      ✓ should not distribute $KINGs if no one deposit (2633736 gas)
+      ✓ should distribute $KINGs properly for each staker (3721922 gas)
+      ✓ should give proper $KINGs allocation to each pool (2861498 gas)
+      - should stop giving bonus $KINGs after the bonus period ends
+      ✓ getMultiplier (2189394 gas)
+      ✓ transfer King Token Ownership (2154541 gas)
+      ✓ add lp token (2415839 gas)
+
+  Contract: ArchbishopV2
+    ✓ should set correct state variables
+    ✓ should allow owner and only owner to update admin (51381 gas)
+    ✓ should allow owner and only owner to update admin (51381 gas)
+    ✓ should allow owner and only owner to update king Fee Address (51225 gas)
+    ✓ should allow owner and only owner to update kingServant (51223 gas)
+    ✓ should allow owner and only owner to update lpFeeRatio (72960 gas)
+    ✓ should allow owner and only owner to update withdrawInterval (49756 gas)
+    ✓ should allow admin and only admin to update king fee ratio (73304 gas)
+    ✓ should allow admin and only admin to update king per block for yeild farming (50187 gas)
+    ✓ should allow admin and only admin to update king per block for trade mining (50343 gas)
+    ✓ set trade mining speed up end block (50525 gas)
+    ✓ set yield farming II end block (50631 gas)
+    ✓ set trade mining end block (50659 gas)
+    ✓ handover the kingtoken mintage right (65414 gas)
+    ✓ getMultiplier
+    ✓ getKingPerBlock
+    With ERC/LP token added to the field
+      ✓ add pool (405159 gas)
+      ✓ set pool allocpoint (249562 gas)
+      ✓ set multiplierSToken (241736 gas)
+      ✓ set pool withdraw king switch (227981 gas)
+      ✓ should give out $KINGs only after farming time (3891887 gas)
+@openzeppelin/test-helpers WARN advanceBlockTo: Advancing too many blocks is causing this test to be slow.
+      ✓ should distribute $KINGs properly for each staker (4844083 gas)
+      ✓ should give proper $KINGs allocation to each pool (3876209 gas)
+@openzeppelin/test-helpers WARN advanceBlockTo: Advancing too many blocks is causing this test to be slow.
+      ✓ should stop giving bonus $KINGs after the bonus period ends (3503301 gas)
+@openzeppelin/test-helpers WARN advanceBlockTo: Advancing too many blocks is causing this test to be slow.
+      ✓ can not harvest king if harvest interval less than withdraw interval (4100219 gas)
+@openzeppelin/test-helpers WARN advanceBlockTo: Advancing too many blocks is causing this test to be slow.
+      ✓ lp fee ratio (4874591 gas)
+@openzeppelin/test-helpers WARN advanceBlockTo: Advancing too many blocks is causing this test to be slow.
+      ✓ king fee ratio (4139248 gas)
+@openzeppelin/test-helpers WARN advanceBlockTo: Advancing too many blocks is causing this test to be slow.
+      ✓ withdraw (4227019 gas)
+@openzeppelin/test-helpers WARN advanceBlockTo: Advancing too many blocks is causing this test to be slow.
+      ✓ emergency withdraw (3667810 gas)
+
+  Contract: KingDrinker
+    ✓ only owner can set factory (50884 gas)
+    ✓ should convert uni to king successfully (535709 gas)
+    KingSwapPair::lockIn
+      ✓ should be able to convert uni to king no pair route is locked (159332 gas)
+      ✓ should not be able to convert uni to king when uni -> king pair route is locked (108090 gas)
+      ✓ should be able to convert uni to king when king -> uni pair route is locked (163562 gas)
+      ✓ should not be able to convert uni to king when both pair routes are locked (112302 gas)
+
+  Contract: KingLock
+    ✓ should deposit KingLock Token success (580850 gas)
+
+  Contract: KingServant
+    ✓ should transfer owner successfully (30861 gas)
+    ✓ should set burn ratio successfully (97111 gas)
+    ✓ should make $KINGs successfully (2451753 gas)
+    ✓ should make $KINGs with new burn ratio successfully (2636254 gas)
+
+  Contract: KingSwapBatchTrade
+gas used when swap token 10 times:1878088
+stoken amount when swap token 10 times:1808
+952
+    ✓ should swap from tokenA to tokenB 10 times successfully (2259901 gas)
+gas used when swap token 10 times:2092800
+stoken amount when swap token 10 times:1788
+10000
+    ✓ should swap from tokenA to tokenB 10 times and add liquidity successfully (2474573 gas)
+gas used when swap token 10 times:323633
+stoken amount when swap token 10 times:0
+10000 0 4974
+    ✓ should add liquidity successfully (705422 gas)
+gas used when swap token 20 times:3563424
+stoken amount when swap token 20 times:2763
+3269 2664 0
+    ✓ should swap from tokenA to tokenB 20 time successfully (4211731 gas)
+gas used when swap eth 10 times:1907696
+stoken amount when swap eth 10 times:5814256658033301417050
+eth diff: 5016256269788194024
+4978102349788194024 5814256658033301417050 0
+    ✓ should swap from ETH to other tokens 10 times successfully (1907696 gas)
+gas used when swap eth 10 times:2007486
+stoken amount when swap eth 10 times:3005080208994583230
+eth diff: 1040149720000000000
+add liqudity:432610024903940937
+1000000000000000000 3005080208994583230 432610024903940937
+    ✓ should swap from ETH to other tokens and add liquidity successfully (2007486 gas)
+gas used when swap eth 10 times:303017
+stoken amount when swap eth 10 times:0
+eth diff: 1006060340000000000
+add liqudity:10540925533894597773
+1000000000000000000 0 10540925533894597773
+    ✓ should add ETH liquidity successfully (303017 gas)
+gas used when swap eth 20 times:3572308
+stoken amount when swap eth 20 times:34808386982151924379
+4999904974320461814 34808386982151924379 0
+    ✓ should swap from ETH to other tokens 20 times successfully (3572308 gas)
+0xf491289b5DA695D7892B4960dcf48eB7e1ACb6B8 0xE53A3Bac98c9D304a3bB6Ce34ed37923BC25117a 0xE53A3Bac98c9D304a3bB6Ce34ed37923BC25117a
+gas used when swap token 20 times:3566188
+stoken amount when swap token 20 times:420656260575876234535
+token consumed:110704758061051514
+110704758061051514 420656260575876234535 0
+    ✓ simulate ETH/$KING (3954755 gas)
+gas used when swap token 20 times:3566140
+stoken amount when swap token 20 times:4111611884687400438198
+token consumed:159308203
+159308203 4111611884687400438198 0
+    ✓ simulate USDT/$KING (3952634 gas)
+gas used when swap token 20 times:3566188
+stoken amount when swap token 20 times:4562455235652158315106
+token consumed:165520006497018352101
+165520006497018352101 4562455235652158315106 0
+    ✓ simulate DAI/$KING (3955078 gas)
+
+  Contract: KingSwapMigrator
+    ✓ should migrate from uniswap successfully (828012 gas)
+    ✓ should migrate from sushiswap successfully (827984 gas)
+    ✓ should migrate from uniswap with permit successfully (890528 gas)
+    ✓ should migrate from sushiswap with permit successfully (848580 gas)
+
+  Contract: KingSwapPair::lockIn
+    lockedIn0 == true && lockedIn1 == false
+      ✓ Should allow swap on: (amount0Out == 0 && amount1Out != 0) (127209 gas)
+      - Should forbid swap on: (amount0Out == 0 && amount1Out == 0)
+      ✓ Should forbid swap on: (amount0Out != 0 && amount1Out != 0) (31441 gas)
+      ✓ Should forbid swap on: (amount0Out != 0 && amount1Out == 0) (31429 gas)
+    lockedIn0 == true && lockedIn1 == true
+      ✓ Should forbid swap on: (amount0Out == 0 && amount1Out != 0) (31472 gas)
+      - Should forbid swap on: (amount0Out == 0 && amount1Out == 0)
+      ✓ Should forbid swap on: (amount0Out != 0 && amount1Out != 0) (31441 gas)
+      ✓ Should forbid swap on: (amount0Out != 0 && amount1Out == 0) (31429 gas)
+    lockedIn0 == false && lockedIn1 == false
+      ✓ Should allow swap on: (amount0Out == 0 && amount1Out != 0) (127201 gas)
+      - Should forbid swap on: (amount0Out == 0 && amount1Out == 0)
+      ✓ Should allow swap on: (amount0Out != 0 && amount1Out != 0) (145255 gas)
+      ✓ Should allow swap on: (amount0Out != 0 && amount1Out == 0) (86877 gas)
+    lockedIn0 == false && lockedIn1 == true
+      ✓ Should forbid swap on: (amount0Out == 0 && amount1Out != 0) (31464 gas)
+      - Should forbid swap on: (amount0Out == 0 && amount1Out == 0)
+      ✓ Should forbid swap on: (amount0Out != 0 && amount1Out != 0) (31465 gas)
+      ✓ Should allow swap on: (amount0Out != 0 && amount1Out == 0) (129045 gas)
+
+  Contract: KingToken
+    ✓ should have correct name and symbol and decimal
+    ✓ should only allow owner to mint token (143103 gas)
+    ✓ should supply token transfers properly (211244 gas)
+    ✓ should fail if you try to do bad transfers (114606 gas)
+    ✓ should update vote of delegatee when delegator transfers (541127 gas)
+
+  Contract: KingUni
+    ✓ should set correct state variables (2317499 gas)
+    ✓ pool info (4525945 gas)
+    ✓ getMultiplier (2317511 gas)
+    With ERC/LP token added to the field
+      - should allow emergency withdraw
+      ✓ should give out $KINGs only after farming time (3407892 gas)
+@openzeppelin/test-helpers WARN advanceBlockTo: Advancing too many blocks is causing this test to be slow.
+      ✓ should distribute $KINGs properly for each staker (3737798 gas)
+@openzeppelin/test-helpers WARN advanceBlockTo: Advancing too many blocks is causing this test to be slow.
+      ✓ should give proper $KINGs allocation to each pool (3224805 gas)
+
+  Contract: KingUniV2
+find init code hash: b766a1c755935658001853a78ea8c0fff7929f287e3a93a2d64bbf31efe48ba2
+    ✓ should allow emergency withdraw (643482 gas)
+find init code hash: b766a1c755935658001853a78ea8c0fff7929f287e3a93a2d64bbf31efe48ba2
+    ✓ should deposit and withdraw correct (1577135 gas)
+find init code hash: b766a1c755935658001853a78ea8c0fff7929f287e3a93a2d64bbf31efe48ba2
+    ✓ should pending works right (1068099 gas)
+find init code hash: b766a1c755935658001853a78ea8c0fff7929f287e3a93a2d64bbf31efe48ba2
+964506172839506172
+    ✓ should both withdraw king and uni rewards (906734 gas)
+find init code hash: b766a1c755935658001853a78ea8c0fff7929f287e3a93a2d64bbf31efe48ba2
+oldBalance: 15000000000000000000000
+    ✓ should migrate works well (10675023 gas)
+find init code hash: b766a1c755935658001853a78ea8c0fff7929f287e3a93a2d64bbf31efe48ba2
+    ✓ should two pools works well (13301673 gas)
+
+  Contract: KingVoterCalc
+    ✓ check totalSupply (493102 gas)
+    ✓ check votePools api (54240670 gas)
+    ✓ check balanceOf (40025663 gas)
+
+  Contract: KingVoterCalc
+    ✓ check totalSupply (493102 gas)
+    ✓ check balanceOf (40025719 gas)
+    ✓ check setCalcAddr (9979943 gas)
+
+  Contract: AddressStringUtil
+    ✓ should properly covert address to the uppercase hex string
+
+  Contract: SafeERC20Namer
+    ✓ should produce the expected token name and symbol from the token address
+
+  Contract: Migrator
+    ✓ should do the migration successfully (1638499 gas)
+    ✓ should allow first minting from public only after migrator is gone (5096038 gas)
+
+  Contract: RoundTable
+    ✓ should not allow enter if not enough approve (538958 gas)
+    ✓ should not allow withraw more than what you have (327124 gas)
+    ✓ should work with more than one participant (620495 gas)
+
+  Contract: STokenMaster
+    ✓ should set correct state variables
+    ✓ pool info (1782911 gas)
+    ✓ getMultiplier
+    With ERC/LP token added to the field
+@openzeppelin/test-helpers WARN advanceBlockTo: Advancing too many blocks is causing this test to be slow.
+      ✓ should give out $KINGs only after farming time (3288349 gas)
+@openzeppelin/test-helpers WARN advanceBlockTo: Advancing too many blocks is causing this test to be slow.
+      ✓ should not distribute $KINGs if no one deposit (3002218 gas)
+@openzeppelin/test-helpers WARN advanceBlockTo: Advancing too many blocks is causing this test to be slow.
+      ✓ should distribute $KINGs properly for each staker (3586998 gas)
+@openzeppelin/test-helpers WARN advanceBlockTo: Advancing too many blocks is causing this test to be slow.
+      ✓ should give proper $KINGs allocation to each pool (3584582 gas)
+@openzeppelin/test-helpers WARN advanceBlockTo: Advancing too many blocks is causing this test to be slow.
+      ✓ should stop giving $KINGs after the stoken mining is end (3024945 gas)
+@openzeppelin/test-helpers WARN advanceBlockTo: Advancing too many blocks is causing this test to be slow.
+      ✓ king owner is sTokenMaster (2968486 gas)
+@openzeppelin/test-helpers WARN advanceBlockTo: Advancing too many blocks is causing this test to be slow.
+      ✓ with draw (3117456 gas)
+@openzeppelin/test-helpers WARN advanceBlockTo: Advancing too many blocks is causing this test to be slow.
+      ✓ emergency with draw (2930032 gas)
+      ✓ Burn king for pool (550684 gas)
+      ✓ set admin (51218 gas)
+      ✓ set endBlock (51457 gas)
+      ✓ set Multiplier (49679 gas)
+      ✓ set king per block (49721 gas)
+
+  Contract: Timelock
+    ✓ should not allow non-owner to do operation (101325 gas)
+    ✓ should do the timelock thing (142801 gas)
+    ✓ should also work with Archbishop (4058906 gas)
+
+  Contract: Governor
+    ✓ should work (9218147 gas)
+    - should run long test
+
+·--------------------------------------------------------|---------------------------|-------------|----------------------------·
+|          Solc version: 0.6.12+commit.27d51765          ·  Optimizer enabled: true  ·  Runs: 200  ·  Block limit: 6718946 gas  │
+·························································|···························|·············|·····························
+|  Methods                                                                                                                      │
+·······················|·································|·············|·············|·············|··············|··············
+|  Contract            ·  Method                         ·  Min        ·  Max        ·  Avg        ·  # calls     ·  usd (avg)  │
+·······················|·································|·············|·············|·············|··············|··············
+|  Archbishop          ·  add                            ·     119128  ·     244804  ·     161033  ·          25  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  Archbishop          ·  deposit                        ·      46635  ·     284960  ·     115796  ·          24  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  Archbishop          ·  emergencyWithdraw              ·          -  ·          -  ·      24876  ·           2  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  Archbishop          ·  migrate                        ·          -  ·          -  ·     309527  ·           1  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  Archbishop          ·  setMigrator                    ·          -  ·          -  ·      43452  ·           1  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  Archbishop          ·  stakeholder                    ·          -  ·          -  ·      28391  ·           3  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  Archbishop          ·  transferOwnership              ·          -  ·          -  ·      30883  ·           2  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  Archbishop          ·  withdraw                       ·      81519  ·     178021  ·     129472  ·           8  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  ArchbishopV2        ·  add                            ·     164899  ·     235745  ·     188326  ·          20  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  ArchbishopV2        ·  deposit                        ·      91953  ·     243638  ·     176825  ·          27  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  ArchbishopV2        ·  emergencyWithdraw              ·          -  ·          -  ·      60630  ·           1  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  ArchbishopV2        ·  handoverKingMintage            ·          -  ·          -  ·      34531  ·           2  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  ArchbishopV2        ·  set                            ·          -  ·          -  ·      36332  ·           2  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  ArchbishopV2        ·  setAdmin                       ·          -  ·          -  ·      28574  ·           4  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  ArchbishopV2        ·  setKingFeeAddress              ·          -  ·          -  ·      28514  ·           2  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  ArchbishopV2        ·  setKingFeeRatio                ·          -  ·          -  ·      28280  ·           2  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  ArchbishopV2        ·  setKingLockSwitch              ·          -  ·          -  ·      14712  ·           3  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  ArchbishopV2        ·  setKingPerBlockTradeMining     ·      27560  ·      27632  ·      27572  ·          12  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  ArchbishopV2        ·  setKingPerBlockYieldFarming    ·      27494  ·      27554  ·      27504  ·          12  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  ArchbishopV2        ·  setKingServant                 ·          -  ·          -  ·      28513  ·           2  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  ArchbishopV2        ·  setLpFeeRatio                  ·          -  ·          -  ·      28158  ·           3  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  ArchbishopV2        ·  setMultiplierSToken            ·          -  ·          -  ·      28527  ·           2  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  ArchbishopV2        ·  setTradeMiningEndBlock         ·      28180  ·      28192  ·      28188  ·           3  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  ArchbishopV2        ·  setTradeMiningSpeedUpEndBlock  ·          -  ·          -  ·      28125  ·           2  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  ArchbishopV2        ·  setWithdrawInterval            ·      27323  ·      27335  ·      27326  ·           7  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  ArchbishopV2        ·  setYieldFarmingIIEndBlock      ·      28166  ·      28178  ·      28174  ·           3  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  ArchbishopV2        ·  withdraw                       ·     109783  ·     208232  ·     145430  ·          20  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  GovernorAlpha       ·  __acceptAdmin                  ·          -  ·          -  ·      23368  ·           1  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  GovernorAlpha       ·  castVote                       ·          -  ·          -  ·      96720  ·           1  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  GovernorAlpha       ·  propose                        ·          -  ·          -  ·     386833  ·           1  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingDrinker         ·  convert                        ·     127545  ·     127573  ·     127554  ·           6  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingDrinker         ·  setFactory                     ·          -  ·          -  ·      28323  ·           2  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingLock            ·  deposit                        ·          -  ·          -  ·      90047  ·           1  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingLock            ·  setwithdrawContractAddr        ·          -  ·          -  ·      43484  ·           1  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingLock            ·  withdrawFromArchbishop         ·          -  ·          -  ·     205667  ·           1  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingLock            ·  withdrawToContract             ·          -  ·          -  ·      61653  ·           1  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingServant         ·  convert                        ·     218929  ·     604047  ·     378402  ·           5  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingServant         ·  setBurnRatio                   ·      24008  ·      28220  ·      26816  ·           3  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingServant         ·  transferOwnership              ·          -  ·          -  ·      30861  ·           2  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingSwapBatchTrade  ·  swapExactETHForTokens          ·     303017  ·    3572308  ·    1947627  ·           8  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingSwapBatchTrade  ·  swapExactTokensForTokens       ·     323633  ·    3566188  ·    2580518  ·          13  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingSwapFactory     ·  createPair                     ·    4025636  ·    4040670  ·    4036494  ·          90  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingSwapFactory     ·  lockInPair                     ·      31777  ·      40201  ·      35989  ·          16  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingSwapFactory     ·  setFeeTo                       ·          -  ·          -  ·      43455  ·           2  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingSwapFactory     ·  setMigrator                    ·      14086  ·      43412  ·      36081  ·           4  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingSwapMigrator    ·  migrateSushiSwap               ·          -  ·          -  ·     212403  ·           2  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingSwapMigrator    ·  migrateSushiSwapWithPermit     ·          -  ·          -  ·     255924  ·           1  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingSwapMigrator    ·  migrateUniswap                 ·          -  ·          -  ·     212419  ·           2  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingSwapMigrator    ·  migrateUniswapWithPermit       ·          -  ·          -  ·     297952  ·           2  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingSwapPair        ·  approve                        ·      44005  ·      44089  ·      44054  ·          24  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingSwapPair        ·  burn                           ·          -  ·          -  ·     113339  ·           2  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingSwapPair        ·  mint                           ·     100446  ·     159357  ·     137823  ·          40  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingSwapPair        ·  swap                           ·      86877  ·     145255  ·     122459  ·           9  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingSwapPair        ·  sync                           ·      40192  ·      55329  ·      48998  ·          10  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingSwapPair        ·  transfer                       ·      36016  ·      51076  ·      50362  ·          22  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingSwapRouter      ·  addLiquidity                   ·     176482  ·     205346  ·     192064  ·          22  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingSwapRouter      ·  addLiquidityETH                ·     217636  ·     217688  ·     217657  ·          11  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingSwapRouter      ·  swapExactTokensForTokens       ·          -  ·          -  ·     171372  ·           1  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingToken           ·  approve                        ·      29023  ·      44047  ·      42676  ·          11  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingToken           ·  delegate                       ·      46578  ·     129507  ·      95912  ·           3  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingToken           ·  mint                           ·      37642  ·      89677  ·      63340  ·          75  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingToken           ·  transfer                       ·      37986  ·      90033  ·      47340  ·          57  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingToken           ·  transferOwnership              ·      30871  ·      30883  ·      30881  ·          34  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingUni             ·  add                            ·     150316  ·     172841  ·     155482  ·           5  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingUni             ·  deposit                        ·      38642  ·     411608  ·     209198  ·          14  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingUni             ·  set                            ·          -  ·          -  ·      36328  ·           2  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingUniV2           ·  deposit                        ·     295169  ·     582600  ·     394631  ·          14  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingUniV2           ·  emergencyWithdraw              ·          -  ·          -  ·     253148  ·           2  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingUniV2           ·  migrate                        ·          -  ·          -  ·     633545  ·           1  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingUniV2           ·  setMigrator                    ·          -  ·          -  ·      43496  ·           1  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingUniV2           ·  withdraw                       ·      96074  ·     524083  ·     268904  ·          10  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingVoterCalc       ·  addVotePool                    ·     147168  ·     275555  ·     203218  ·          59  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingVoterCalc       ·  delVotePool                    ·      75725  ·     203174  ·     135055  ·          54  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingVoterCalc       ·  setPow                         ·      15079  ·      45091  ·      32944  ·          14  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingVoterCalc       ·  setSqrtEnable                  ·      14496  ·      44003  ·      30889  ·           9  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  KingVoterProxy      ·  setCalcAddr                    ·          -  ·          -  ·      28411  ·           2  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  MockERC20           ·  approve                        ·      44011  ·      44131  ·      44043  ·         123  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  MockERC20           ·  transfer                       ·      36139  ·      51211  ·      50163  ·         484  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  RoundTable          ·  enter                          ·      67496  ·     112164  ·      86321  ·          11  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  RoundTable          ·  leave                          ·      59393  ·      74405  ·      70652  ·           4  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  StakingRewards      ·  notifyRewardAmount             ·          -  ·          -  ·      95822  ·          12  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  STokenMaster        ·  add                            ·     141209  ·     173625  ·     154010  ·          12  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  STokenMaster        ·  burnKingForPool                ·      57509  ·      87509  ·      67509  ·           3  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  STokenMaster        ·  deposit                        ·      65986  ·     211844  ·     162729  ·          27  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  STokenMaster        ·  emergencyWithdraw              ·          -  ·          -  ·      96685  ·           2  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  STokenMaster        ·  set                            ·          -  ·          -  ·      36354  ·           1  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  STokenMaster        ·  setAdmin                       ·          -  ·          -  ·      28509  ·           2  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  STokenMaster        ·  setEndBlock                    ·          -  ·          -  ·      28991  ·           2  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  STokenMaster        ·  setKingPerBlock                ·          -  ·          -  ·      27323  ·           1  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  STokenMaster        ·  setMultiplierSToken            ·          -  ·          -  ·      27302  ·           2  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  STokenMaster        ·  setWithdrawSwitch              ·          -  ·          -  ·      44347  ·           4  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  STokenMaster        ·  withdraw                       ·          -  ·          -  ·     284220  ·           2  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  Timelock            ·  executeTransaction             ·      33203  ·     122587  ·      57212  ·           4  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  Timelock            ·  queueTransaction               ·      51920  ·      52993  ·      52555  ·           3  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  Timelock            ·  setPendingAdmin                ·          -  ·          -  ·      66198  ·           1  ·          -  │
+·······················|·································|·············|·············|·············|··············|··············
+|  Deployments                                           ·                                         ·  % of limit  ·             │
+·························································|·············|·············|·············|··············|··············
+|  AddressStringUtilWrapper                              ·          -  ·          -  ·     199747  ·         3 %  ·          -  │
+·························································|·············|·············|·············|··············|··············
+|  Archbishop                                            ·    2123646  ·    2142882  ·    2129361  ·      31.7 %  ·          -  │
+·························································|·············|·············|·············|··············|··············
+|  ArchbishopV2                                          ·    2888478  ·    2907702  ·    2905241  ·      43.2 %  ·          -  │
+·························································|·············|·············|·············|··············|··············
+|  GovernorAlpha                                         ·          -  ·          -  ·    2891412  ·        43 %  ·          -  │
+·························································|·············|·············|·············|··············|··············
+|  KingDrinker                                           ·     565660  ·     565672  ·     565670  ·       8.4 %  ·          -  │
+·························································|·············|·············|·············|··············|··············
+|  KingLock                                              ·          -  ·          -  ·    1181144  ·      17.6 %  ·          -  │
+·························································|·············|·············|·············|··············|··············
+|  KingServant                                           ·    1380249  ·    1380261  ·    1380252  ·      20.5 %  ·          -  │
+·························································|·············|·············|·············|··············|··············
+|  KingSwapBatchTrade                                    ·    1538714  ·    1538726  ·    1538725  ·      22.9 %  ·          -  │
+·························································|·············|·············|·············|··············|··············
+|  KingSwapFactory                                       ·          -  ·          -  ·    4165192  ·        62 %  ·          -  │
+·························································|·············|·············|·············|··············|··············
+|  KingSwapMigrator                                      ·     856375  ·     856387  ·     856384  ·      12.7 %  ·          -  │
+·························································|·············|·············|·············|··············|··············
+|  KingSwapRouter                                        ·    4359414  ·    4359426  ·    4359425  ·      64.9 %  ·          -  │
+·························································|·············|·············|·············|··············|··············
+|  KingToken                                             ·          -  ·          -  ·    1635162  ·      24.3 %  ·          -  │
+·························································|·············|·············|·············|··············|··············
+|  KingUni                                               ·    2317499  ·    2317523  ·    2317511  ·      34.5 %  ·          -  │
+·························································|·············|·············|·············|··············|··············
+|  KingUniV2                                             ·    2812030  ·    2812042  ·    2812037  ·      41.9 %  ·          -  │
+·························································|·············|·············|·············|··············|··············
+|  KingVoterCalc                                         ·          -  ·          -  ·    1948081  ·        29 %  ·          -  │
+·························································|·············|·············|·············|··············|··············
+|  KingVoterProxy                                        ·          -  ·          -  ·     306559  ·       4.6 %  ·          -  │
+·························································|·············|·············|·············|··············|··············
+|  Migrator                                              ·     514984  ·     514996  ·     514992  ·       7.7 %  ·          -  │
+·························································|·············|·············|·············|··············|··············
+|  MockERC20                                             ·     727600  ·     727840  ·     727715  ·      10.8 %  ·          -  │
+·························································|·············|·············|·············|··············|··············
+|  RoundTable                                            ·          -  ·          -  ·    1045138  ·      15.6 %  ·          -  │
+·························································|·············|·············|·············|··············|··············
+|  SafeERC20NamerWrapper                                 ·          -  ·          -  ·     419640  ·       6.2 %  ·          -  │
+·························································|·············|·············|·············|··············|··············
+|  StakingRewards                                        ·    1221755  ·    1221767  ·    1221765  ·      18.2 %  ·          -  │
+·························································|·············|·············|·············|··············|··············
+|  STokenMaster                                          ·    2293988  ·    2313212  ·    2309601  ·      34.4 %  ·          -  │
+·························································|·············|·············|·············|··············|··············
+|  Timelock                                              ·    1428367  ·    1428379  ·    1428376  ·      21.3 %  ·          -  │
+·························································|·············|·············|·············|··············|··············
+|  WETH9                                                 ·          -  ·          -  ·     505829  ·       7.5 %  ·          -  │
+·--------------------------------------------------------|-------------|-------------|-------------|--------------|-------------·
+
+  127 passing (31m)
+  7 pending
+
+Done in 1906.48s.

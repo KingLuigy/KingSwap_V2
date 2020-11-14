@@ -1,0 +1,51 @@
+== contract being tested   Other contracts called
+-------------------------------------------------
+?1    DevFunds
+++2   Migrator             SakeSwapPair,SakeSwapFactory,SakeMAster
+++3   SakeBar
+++2   SakeDrinker          SakeSwapPair,SakeSwapFactory
+++1   SakeLock             SakeMaster
+++4   SakeMaker            SakeSwapPair,SakeSwapFactory
+++10  SakeMaster
+++29  SakeMasterV2
+++11  SakeSwapBatchTrade   SakeSwapPair,SakeSwapRouter,SakeSwapFactory,SakeSwapSlippageToken
+++4   SakeSwapMigrator     SakeSwapPair,SakeSwapRouter,SakeSwapFactory
+++5   SakeToken
++6?1  SakeUni              StakingRewards,SakeMaster,StakingRewards
+++6   SakeUniV2            SakeSwapPair,SakeSwapRouter,SakeSwapFactory,SakeMaster,StakingRewards,Migrator
+++3   SakeVoterCalc        SakeSwapPair,SakeSwapFactory,SakeMaster,SakeBar,STokenMaster,SakeMasterV2
+++3   SakeVoterProxy       SakeSwapPair,SakeSwapFactory,SakeMaster,SakeBar,STokenMaster,SakeMasterV2
+++16  STokenMaster
+++3   Timelock             SakeMaster
++1?1  Governor             SakeMaster,Timelock
+-------------------
+18 (from 24)
+
+== contracts (excl. interfaces, libs, dependencies)
+---------------------------------------------------
+DevFunds.sol            [t]
+GovernorAlpha.sol       [t]
+Migrator.sol            [t]
+STokenMaster.sol        [t]
+SakeBar.sol             [t]
+SakeDrinker.sol         [t]
+SakeLock.sol            [t]
+SakeMaker.sol           [t]
+SakeMaster.sol          [t]
+SakeMasterV2.sol        [t]
+SakeToken.sol           [t]
+SakeUni.sol             [t]
+SakeUniV2.sol           [t]
+SakeVoterCalc.sol       [t]
+SakeVoterProxy.sol      [t]
+Timelock.sol            [t]
+SakeSwapERC20.sol
+SakeSwapFactory.sol
+SakeSwapPair.sol
+SakeSwapRouter.sol
+SakeSwapSlippageToken.sol
+SakeSwapBatchTrade.sol  [t]
+SakeSwapMigrator.sol    [t]
+UniStake.sol (StakingRewards)
+-------------------
+24 contracts

@@ -11,7 +11,7 @@ const KingVoterProxy = artifacts.require('KingVoterProxy');
 const TOTAL_SUPPLY = 10000000;
 const LP_SUPPLY    = 1000000;
 
-contract('KingVoterCalc', ([alice, bob, carol, dev, admin, kingfee, kingServant, minter]) => {
+contract('KingVoterProxy', ([alice, bob, carol, dev, admin, kingfee, kingServant, minter]) => {
     beforeEach(async () => {
         this.kingToken = await KingToken.new({ from: alice });
         await this.kingToken.mint(minter, TOTAL_SUPPLY, { from: alice });
@@ -107,7 +107,7 @@ contract('KingVoterCalc', ([alice, bob, carol, dev, admin, kingfee, kingServant,
         // //no change
         // console.log("get bob balanceOf4",(await this.KingVoterCalc.balanceOf(bob)).valueOf());
 
-         //test masterV2
+         //test archbishopV2
         this.tokenst1 = await MockERC20.new('ST1Token', 'TOKENST', TOTAL_SUPPLY, { from: minter });
         this.lpst1 = await KingSwapPair.at((await this.factory3.createPair(this.tokenst1.address, this.kingToken.address)).logs[0].args.pair);
         await this.tokenst1.transfer(this.lpst1.address, LP_SUPPLY, { from: minter });

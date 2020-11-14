@@ -83,8 +83,8 @@ contract KingVoterCalc {
     IERC20 public king;
     RoundTable public table;
     STokenMaster public stoken;
-    Archbishop public masterV1;
-    ArchbishopV2 public masterV2;
+    Archbishop public archbishopV1;
+    ArchbishopV2 public archbishopV2;
     // TODO: define $KING-ETH pool address
     IERC20 public lpKingEth = IERC20(0xdEad000000000000000000000000000000000000); //KING-ETH
 
@@ -103,14 +103,14 @@ contract KingVoterCalc {
         address _tokenAddr,
         address _tableAddr,
         address _stoken,
-        address _masterAddr,
-        address _masterV2Addr
+        address _archbishop,
+        address _archbishopV2
     ) public {
         king = IERC20(_tokenAddr);
         table = RoundTable(_tableAddr);
         stoken = STokenMaster(_stoken);
-        masterV1 = Archbishop(_masterAddr);
-        masterV2 = ArchbishopV2(_masterV2Addr);
+        archbishopV1 = Archbishop(_archbishop);
+        archbishopV2 = ArchbishopV2(_archbishopV2);
         owner = msg.sender;
         // TODO: define voting pools addresses
         voteLpPoolMap.insert(voteLpPoolMap.size, 0xdEad000000000000000000000000000000000000); //$KING-ETH
@@ -171,19 +171,19 @@ contract KingVoterCalc {
         }
         _vLpToken = IERC20(_vLpTokenAddr);
         //v1 pool
-        for (uint256 j = 0; j < masterV1.poolLength(); j++) {
-            (_vtmpLpToken, , , ) = masterV1.poolInfo(j);
+        for (uint256 j = 0; j < archbishopV1.poolLength(); j++) {
+            (_vtmpLpToken, , , ) = archbishopV1.poolInfo(j);
             if (_vtmpLpToken == _vLpToken) {
-                (_vtmpUserLp, ) = masterV1.userInfo(j, _voter);
+                (_vtmpUserLp, ) = archbishopV1.userInfo(j, _voter);
                 _vUserLp = _vUserLp.add(_vtmpUserLp);
                 break;
             }
         }
         //v2 pool
-        for (uint256 j = 0; j < masterV2.poolLength(); j++) {
-            (_vtmpLpToken, , , , , , ) = masterV2.poolInfo(j);
+        for (uint256 j = 0; j < archbishopV2.poolLength(); j++) {
+            (_vtmpLpToken, , , , , , ) = archbishopV2.poolInfo(j);
             if (_vtmpLpToken == _vLpToken) {
-                (, , _vtmpUserLp, , , ) = masterV2.userInfo(j, _voter);
+                (, , _vtmpUserLp, , , ) = archbishopV2.userInfo(j, _voter);
                 _vUserLp = _vUserLp.add(_vtmpUserLp);
                 break;
             }
