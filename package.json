@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "postinstall": "node ./scripts/patch-truffle.js",
+    "postinstall": "node ./scripts/patch-truffle.js && node ./scripts/patch-truffle-verify.js",
     "test": "npx truffle test",
     "compile": "npx truffle compile",
     "deploy": "npx truffle migrate --network rinkeby",
