@@ -1,4 +1,4 @@
-#!/bin/env node
+#!/usr/bin/env node
 /*
  * On compilation, Truffle includes absolute paths to solidity source files into metadata.
  * Since the bytecode contains the metadata hash, the bytecode compiled from the same source
