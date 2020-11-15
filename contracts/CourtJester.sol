@@ -6,7 +6,7 @@ import "./interfaces/IKingSwapERC20.sol";
 import "./interfaces/IKingSwapPair.sol";
 import "./interfaces/IKingSwapFactory.sol";
 
-contract KingDrinker {
+contract CourtJester {
     using SafeMath for uint;
 
     IKingSwapFactory public factory;
