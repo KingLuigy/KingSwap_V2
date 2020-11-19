@@ -8,13 +8,11 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./libraries/SafeMath96.sol";
 import "./libraries/SafeMath32.sol";
 
-// Archbishop will crown the King and he is a fair guy.
+// Archbishop will crown the King and he is a fair guy...
 //
 // Note that it's ownable and the owner wields tremendous power. The ownership
 // will be transferred to a governance smart contract once $KING is sufficiently
 // distributed and the community can show to govern itself.
-//
-// Hopefully it's bug-free.
 contract ArchbishopV2 is Ownable, ReentrancyGuard {
     using SafeMath for uint256;
     using SafeMath96 for uint96;
@@ -108,31 +106,20 @@ contract ArchbishopV2 is Ownable, ReentrancyGuard {
         address _kingServant,
         address _courtJester,
         uint256 _startBlock,
-        uint256 lptFarmingBlocks, // LP token farming period, in blocks
-        uint256 stFarmingBlocks, // S Token farming period, in blocks
-        uint256 _withdrawInterval,
-        uint256 _kingPerLptFarmingBlock,
-        uint256 _kingPerStFarmingBlock
+        uint256 _withdrawInterval
     ) public {
         king = _nonZeroAddr(_king);
         kingServant = _nonZeroAddr(_kingServant);
         courtJester = _nonZeroAddr(_courtJester);
         startBlock = SafeMath32.fromUint(_startBlock);
         withdrawInterval = SafeMath32.fromUint(_withdrawInterval);
-
-        _setFarmingParams(
-            SafeMath96.fromUint(_kingPerLptFarmingBlock),
-            SafeMath96.fromUint(_kingPerStFarmingBlock),
-            SafeMath32.fromUint(_startBlock + lptFarmingBlocks),
-            SafeMath32.fromUint(_startBlock + stFarmingBlocks)
-        );
     }
 
     function setFarmingParams(
-        uint96 _kingPerLptFarmingBlock,
-        uint96 _kingPerStFarmingBlock,
-        uint32 _lptFarmingEndBlock,
-        uint32 _stFarmingEndBlock
+        uint256 _kingPerLptFarmingBlock,
+        uint256 _kingPerStFarmingBlock,
+        uint256 _lptFarmingEndBlock,
+        uint256 _stFarmingEndBlock
     ) external onlyOwner {
         _setFarmingParams(
             SafeMath96.fromUint(_kingPerLptFarmingBlock),
@@ -293,28 +280,28 @@ contract ArchbishopV2 is Ownable, ReentrancyGuard {
         _updatePool(pid);
     }
 
-    // Deposit lptAmount of LP token and stAmount of S token to mine $KING
+    // Deposit lptAmount of LP token and stAmount of S token to mine $KING,
+    // (it sends to msg.sender $KINGs pending by then)
     function deposit(
         uint256 pid,
         uint256 lptAmount,
         uint256 stAmount
     ) public nonReentrant {
+        require(lptAmount != 0, "deposit: zero LP token amount");
         _validatePid(pid);
+
+        _updatePool(pid);
+
         PoolInfo storage pool = poolInfo[pid];
         UserInfo storage user = userInfo[pid][msg.sender];
 
-        if (lptAmount == 0 && user.pendingKing == 0) {
-            require(user.lptAmount > 0, "deposit:invalid");
-        }
-        _updatePool(pid);
-
-        uint256 pending = _accPending(
+        uint256 oldStAmount = user.stAmount;
+        uint96 pendingKingAmount = _accPending(
             user.pendingKing,
             user.wAmount,
             user.rewardDebt,
             pool.accKingPerShare
         );
-        uint256 prevStAmount = user.stAmount;
         user.lptAmount = user.lptAmount.add(lptAmount);
         user.stAmount = user.stAmount.add(stAmount);
         user.wAmount = _accWeighted(
@@ -323,48 +310,33 @@ contract ArchbishopV2 is Ownable, ReentrancyGuard {
             stAmount,
             pool.sTokenWeight
         );
-        user.pendingKing = uint96(pending);
+
         uint32 curBlock = curBlock();
-        if (pool.kingLock) {
-            if (curBlock > (user.lastWithdrawBlock.add(withdrawInterval))) {
-                user.lastWithdrawBlock = curBlock;
-                user.pendingKing = 0;
-                user.stAmount = stAmount;
-                user.wAmount = _weighted(
-                    user.lptAmount,
-                    stAmount,
-                    pool.sTokenWeight
-                );
-                pool.sToken.safeTransfer(address(1), prevStAmount);
-                if (pending > 0) {
-                    _safeKingTransfer(msg.sender, pending);
-                }
-            }
-        } else {
+        if (
+            _sendKingToken(
+                msg.sender,
+                pendingKingAmount,
+                pool.kingLock,
+                curBlock.sub(user.lastWithdrawBlock)
+            )
+        ) {
             user.lastWithdrawBlock = curBlock;
             user.pendingKing = 0;
-            if (lptAmount == 0 && stAmount == 0) {
-                user.stAmount = 0;
-                user.wAmount = user.lptAmount;
-                pool.sToken.safeTransfer(address(1), prevStAmount);
-            }
-            if (pending > 0) {
-                uint256 kingFee = pending.mul(kingFeePct).div(100);
-                uint256 kingToUser = pending.sub(kingFee);
-                _safeKingTransfer(msg.sender, kingToUser);
-                _safeKingTransfer(courtJester, kingFee);
-            }
+            pool.sToken.safeTransfer(address(1), oldStAmount);
+        } else {
+            user.pendingKing = pendingKingAmount;
         }
         user.rewardDebt = _pending(user.wAmount, 0, pool.accKingPerShare);
 
-        if (lptAmount != 0)
-            pool.lpToken.safeTransferFrom(msg.sender, address(this), lptAmount);
+        pool.lpToken.safeTransferFrom(msg.sender, address(this), lptAmount);
         if (stAmount != 0)
             pool.sToken.safeTransferFrom(msg.sender, address(this), stAmount);
+
         emit Deposit(msg.sender, pid, lptAmount, stAmount);
     }
 
-    // Withdraw lptAmount of LP token and burn all S tokens
+    // Withdraw lptAmount of LP token and all pending $KING tokens
+    // (it burns all S tokens)
     function withdraw(uint256 pid, uint256 lptAmount) public nonReentrant {
         _validatePid(pid);
         PoolInfo storage pool = poolInfo[pid];
@@ -377,7 +349,7 @@ contract ArchbishopV2 is Ownable, ReentrancyGuard {
         uint256 stAmount = user.stAmount;
 
         _updatePool(pid);
-        uint96 accPending = _accPending(
+        uint96 pendingKingAmount = _accPending(
             user.pendingKing,
             user.wAmount,
             user.rewardDebt,
@@ -391,7 +363,7 @@ contract ArchbishopV2 is Ownable, ReentrancyGuard {
         if (
             _sendKingToken(
                 msg.sender,
-                accPending,
+                pendingKingAmount,
                 pool.kingLock,
                 curBlock.sub(user.lastWithdrawBlock)
             )
@@ -399,22 +371,24 @@ contract ArchbishopV2 is Ownable, ReentrancyGuard {
             user.lastWithdrawBlock = curBlock;
             user.pendingKing = 0;
         } else {
-            user.pendingKing = accPending;
+            user.pendingKing = pendingKingAmount;
         }
 
-        uint256 exclFee = _sendLpToken(msg.sender, pool, lptAmount, stAmount);
-        emit Withdraw(msg.sender, pid, exclFee);
+        uint256 sentLptAmount = lptAmount == 0
+            ? 0
+            : _sendLptAndBurnSt(msg.sender, pool, lptAmount, stAmount);
+        emit Withdraw(msg.sender, pid, sentLptAmount);
     }
 
     // Withdraw without caring about rewards. EMERGENCY ONLY.
+    // (it clears all pending $KINGs and burns all S tokens)
     function emergencyWithdraw(uint256 pid) public {
         _validatePid(pid);
         PoolInfo storage pool = poolInfo[pid];
         UserInfo storage user = userInfo[pid][msg.sender];
 
         uint256 lptAmount = user.lptAmount;
-        user.lptAmount = 0;
-
+        user.lptAmount = 0; // serves as "non-reentrant"
         require(lptAmount > 0, "withdraw: zero LP token amount");
 
         uint32 curBlock = curBlock();
@@ -425,8 +399,33 @@ contract ArchbishopV2 is Ownable, ReentrancyGuard {
         user.pendingKing = 0;
         user.lastWithdrawBlock = curBlock;
 
-        uint256 exclFee = _sendLpToken(msg.sender, pool, lptAmount, stAmount);
-        emit EmergencyWithdraw(msg.sender, pid, exclFee);
+        uint256 sentLptAmount = _sendLptAndBurnSt(
+            msg.sender,
+            pool,
+            lptAmount,
+            stAmount
+        );
+        emit EmergencyWithdraw(msg.sender, pid, sentLptAmount);
+    }
+
+    function setKingServant(address _kingServant) public onlyOwner {
+        kingServant = _nonZeroAddr(_kingServant);
+    }
+
+    function setCourtJester(address _courtJester) public onlyOwner {
+        courtJester = _nonZeroAddr(_courtJester);
+    }
+
+    function setKingFeePct(uint256 newPercent) public onlyOwner {
+        kingFeePct = _validPercent(newPercent);
+    }
+
+    function setLpFeePct(uint256 newPercent) public onlyOwner {
+        lpFeePct = _validPercent(newPercent);
+    }
+
+    function setWithdrawInterval(uint256 _blockNum) public onlyOwner {
+        withdrawInterval = SafeMath32.fromUint(_blockNum);
     }
 
     function _updatePool(uint256 pid) internal {
@@ -464,6 +463,8 @@ contract ArchbishopV2 is Ownable, ReentrancyGuard {
         uint32 blocksSinceLastWithdraw
     ) internal returns (bool isSent) {
         isSent = true;
+        if (amount == 0) return isSent;
+
         uint256 feeAmount = 0;
         uint256 userAmount = 0;
 
@@ -489,11 +490,11 @@ contract ArchbishopV2 is Ownable, ReentrancyGuard {
         );
     }
 
-    function _sendLpToken(
+    function _sendLptAndBurnSt(
         address user,
         PoolInfo storage pool,
         uint256 lptAmount,
-        uint256 stAmountToBurn
+        uint256 stAmount
     ) internal returns (uint256) {
         uint256 userLptAmount = lptAmount;
 
@@ -504,10 +505,9 @@ contract ArchbishopV2 is Ownable, ReentrancyGuard {
             pool.lpToken.safeTransfer(kingServant, lptFee);
         }
 
-        if (stAmountToBurn != 0)
-            pool.sToken.safeTransfer(address(1), stAmountToBurn);
+        if (userLptAmount != 0) pool.lpToken.safeTransfer(user, userLptAmount);
+        if (stAmount != 0) pool.sToken.safeTransfer(address(1), stAmount);
 
-        pool.lpToken.safeTransfer(user, userLptAmount);
         return userLptAmount;
     }
 
@@ -515,26 +515,6 @@ contract ArchbishopV2 is Ownable, ReentrancyGuard {
         uint256 kingBal = IERC20(king).balanceOf(address(this));
         // if pool lacks some tiny $KING amount due to imprecise rounding
         IERC20(king).safeTransfer(_to, _amount > kingBal ? kingBal : _amount);
-    }
-
-    function setKingServant(address _kingServant) public onlyOwner {
-        kingServant = _nonZeroAddr(_kingServant);
-    }
-
-    function setCourtJester(address _courtJester) public onlyOwner {
-        courtJester = _nonZeroAddr(_courtJester);
-    }
-
-    function setKingFeePct(uint256 newPercent) public onlyOwner {
-        kingFeePct = _validPercent(newPercent);
-    }
-
-    function setLpFeePct(uint256 newPercent) public onlyOwner {
-        lpFeePct = _validPercent(newPercent);
-    }
-
-    function setWithdrawInterval(uint256 _blockNum) public onlyOwner {
-        withdrawInterval = SafeMath32.fromUint(_blockNum);
     }
 
     function _setFarmingParams(
@@ -571,7 +551,7 @@ contract ArchbishopV2 is Ownable, ReentrancyGuard {
         );
 
         kingPerLptFarmingBlock = _kingPerLptFarmingBlock;
-        kingPerStFarmingBlock = kingPerStFarmingBlock;
+        kingPerStFarmingBlock = _kingPerStFarmingBlock;
     }
 
     // Revert if the LP token has been already added.
