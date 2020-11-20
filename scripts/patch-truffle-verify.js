@@ -11,7 +11,7 @@
 const fs = require("fs");
 
 const OLD_STR = "require.resolve(contractPath)";
-const NEW_STR = "require.resolve(path.isAbsolute(contractPath) ? contractPath : path.resolve(options.workingDir, contractPath))"
+const NEW_STR = "((p, o) => { try { return require.resolve(p);} catch(e) { return require.resolve(path.resolve(o.workingDir, p));}})(contractPath, options)"
 
 const fixFile = (file) => {
   console.log("Patching " + file);
