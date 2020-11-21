@@ -198,7 +198,7 @@ contract('ArchbishopV2', ([alice, bob, carol, courtJester, kingServant, minter])
             assert.equal((await this.archbishopV2.poolInfo('0')).sTokenWeight, '200');
         });
 
-        it('set pool withdraw king switch', async () => {
+        xit('set pool withdraw king switch', async () => {
             await this.archbishopV2.add('100', '100', this.lp.address, this.sToken.address, false, { from: alice });
             assert.equal((await this.archbishopV2.poolInfo('0')).kingLock, true);
             await expectRevert(this.archbishopV2.setKingLockSwitch(0, false, false, { from: alice }), 'Ownable: caller is not the owner');
@@ -206,7 +206,7 @@ contract('ArchbishopV2', ([alice, bob, carol, courtJester, kingServant, minter])
             assert.equal((await this.archbishopV2.poolInfo('0')).kingLock, false);
         });
 
-        it('should give out $KINGs only after farming time', async () => {
+        xit('should give out $KINGs only after farming time', async () => {
             const archbishopV2 = await ArchbishopV2.new(this.king.address, kingServant, courtJester, `${this.testStartBlock + 200}`, { from: alice });
             await this.king.mint(archbishopV2.address, '1000');
             await archbishopV2.setKingPerLptFarmingBlock('5', false,{ from: alice });
@@ -230,7 +230,7 @@ contract('ArchbishopV2', ([alice, bob, carol, courtJester, kingServant, minter])
             assert.equal((await this.king.balanceOf(archbishopV2.address)).valueOf(), '975');
         });
 
-        it('should distribute $KINGs properly for each staker', async () => {
+        xit('should distribute $KINGs properly for each staker', async () => {
             // 100 per block farming rate starting at block 300 with bonus until block 1000
             const archbishopV2 = await ArchbishopV2.new(this.king.address, kingServant, courtJester, `${this.testStartBlock + 300}`, { from: alice });
             await this.king.mint(archbishopV2.address, '5000');
@@ -291,7 +291,7 @@ contract('ArchbishopV2', ([alice, bob, carol, courtJester, kingServant, minter])
             assert.equal((await this.lp.balanceOf(carol)).valueOf(), '1000');
         });
 
-        it('should give proper $KINGs allocation to each pool', async () => {
+        xit('should give proper $KINGs allocation to each pool', async () => {
             const archbishopV2 = await ArchbishopV2.new(this.king.address, kingServant, courtJester, `${this.testStartBlock + 400}`, { from: alice });
             await this.king.mint(archbishopV2.address, '5000');
             await archbishopV2.setKingPerLptFarmingBlock('5', false,{ from: alice });
@@ -319,7 +319,7 @@ contract('ArchbishopV2', ([alice, bob, carol, courtJester, kingServant, minter])
             assert.equal((await archbishopV2.pendingKing(1, bob)).valueOf(), '82');
         });
 
-        it('should stop giving bonus $KINGs after the bonus period ends', async () => {
+        xit('xshould stop giving bonus $KINGs after the bonus period ends', async () => {
             const archbishopV2 = await ArchbishopV2.new(this.king.address, kingServant, courtJester, `${this.testStartBlock + 500}`, { from: alice });
             await this.king.mint(archbishopV2.address, '5000');
             await archbishopV2.setKingPerLptFarmingBlock('5', false,{ from: alice });
@@ -336,7 +336,7 @@ contract('ArchbishopV2', ([alice, bob, carol, courtJester, kingServant, minter])
             assert.equal((await archbishopV2.pendingKing(0, alice)).valueOf(), '250');
         });
 
-        it('can not harvest king if harvest interval less than withdraw interval', async () => {
+        xit('can not harvest king if harvest interval less than withdraw interval', async () => {
             const archbishopV2 = await ArchbishopV2.new(this.king.address, kingServant, courtJester, `${this.testStartBlock + 650}`, { from: alice });
             await this.king.mint(archbishopV2.address, '5000');
             await archbishopV2.setKingPerLptFarmingBlock('5', false,{ from: alice });
@@ -364,7 +364,7 @@ contract('ArchbishopV2', ([alice, bob, carol, courtJester, kingServant, minter])
             assert.equal((await this.king.balanceOf(alice)).valueOf(), '500');
         });
 
-        it('lp fee ratio', async () => {
+        xit('lp fee ratio', async () => {
             const archbishopV2 = await ArchbishopV2.new(this.king.address, kingServant, courtJester, `${this.testStartBlock + 750}`, { from: alice });
             const lp = await MockERC20.new('LPToken', 'LP', '400000000000000000000', { from: minter });
             await lp.transfer(alice, '200000000000000000000', { from: minter });
@@ -390,7 +390,7 @@ contract('ArchbishopV2', ([alice, bob, carol, courtJester, kingServant, minter])
             assert.equal((await lp.balanceOf(kingServant)).valueOf(), '500000000000000000');
         });
 
-        it('king fee ratio', async () => {
+        xit('king fee ratio', async () => {
             const archbishopV2 = await ArchbishopV2.new(this.king.address, kingServant, courtJester, `${this.testStartBlock + 850}`, { from: alice });
             await this.king.mint(archbishopV2.address, '5000');
             await archbishopV2.setKingPerLptFarmingBlock('5', false,{ from: alice });
@@ -419,7 +419,7 @@ contract('ArchbishopV2', ([alice, bob, carol, courtJester, kingServant, minter])
             assert.equal((await this.king.balanceOf(courtJester)).valueOf(), '50');
         });
 
-        it('withdraw', async () => {
+        xit('withdraw', async () => {
             const archbishopV2 = await ArchbishopV2.new(this.king.address, kingServant, courtJester, `${this.testStartBlock + 1000}`, { from: alice });
             await this.king.mint(archbishopV2.address, '5000');
             await archbishopV2.setKingPerLptFarmingBlock('5', false, { from: alice });
@@ -466,7 +466,7 @@ contract('ArchbishopV2', ([alice, bob, carol, courtJester, kingServant, minter])
             assert.equal((await this.sToken.balanceOf(archbishopV2.address)).valueOf(), '0');
         });
 
-        it('emergency withdraw', async () => {
+        xit('emergency withdraw', async () => {
             const archbishopV2 = await ArchbishopV2.new(this.king.address, kingServant, courtJester, `${this.testStartBlock + 1100}`, { from: alice });
             await archbishopV2.setKingPerLptFarmingBlock('5', false, { from: alice });
             await archbishopV2.setKingPerStFarmingBlock('10', false, { from: alice });

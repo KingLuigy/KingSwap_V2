@@ -240,8 +240,10 @@ contract KingSwapPair is KingSwapERC20 {
         require(amount0In > 0 || amount1In > 0, "KingSwap: INSUFFICIENT_INPUT_AMOUNT");
         {
             // scope for reserve{0,1}Adjusted, avoids stack too deep errors
-            uint256 balance0Adjusted = balance0.mul(10000).sub(amount0In.mul(25));
-            uint256 balance1Adjusted = balance1.mul(10000).sub(amount1In.mul(25));
+            uint256 balance0Adjusted = balance0.mul(1000);
+            if (amount0In != 0) balance0Adjusted = balance0Adjusted.sub(amount0In.mul(25)/10);
+            uint256 balance1Adjusted = balance1.mul(1000);
+            if (amount1In != 0) balance1Adjusted = balance1Adjusted.sub(amount1In.mul(25)/10);
             require(
                 balance0Adjusted.mul(balance1Adjusted) >= uint256(_reserve0).mul(_reserve1).mul(1000**2),
                 "KingSwap: K"
