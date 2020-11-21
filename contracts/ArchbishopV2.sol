@@ -121,6 +121,9 @@ contract ArchbishopV2 is Ownable, ReentrancyGuard {
         uint256 _lptFarmingEndBlock,
         uint256 _stFarmingEndBlock
     ) external onlyOwner {
+        uint32 _startBlock = startBlock;
+        require(_lptFarmingEndBlock >= _startBlock, "ArchV2:INVALID_lptFarmEndBlock");
+        require(_stFarmingEndBlock >= _startBlock, "ArchV2:INVALID_stFarmEndBlock");
         _setFarmingParams(
             SafeMath96.fromUint(_kingPerLptFarmingBlock),
             SafeMath96.fromUint(_kingPerStFarmingBlock),
@@ -424,8 +427,8 @@ contract ArchbishopV2 is Ownable, ReentrancyGuard {
         lpFeePct = _validPercent(newPercent);
     }
 
-    function setWithdrawInterval(uint256 _blockNum) public onlyOwner {
-        withdrawInterval = SafeMath32.fromUint(_blockNum);
+    function setWithdrawInterval(uint256 _blocks) public onlyOwner {
+        withdrawInterval = SafeMath32.fromUint(_blocks);
     }
 
     function _updatePool(uint256 pid) internal {
