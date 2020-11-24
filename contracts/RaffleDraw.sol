@@ -47,7 +47,7 @@ contract RaffleDraw is Ownable {
     event TicketCosts(uint256 cost);
     event Game(uint256 game);
     event GameOver(uint256 game);
-    event Ticket(uint256 indexed game, address indexed participant, uint256 index);
+    event Ticket(uint256 indexed game, address indexed participant, uint256 index, uint256 finalIndex);
     event Referrer(address indexed referrer, address indexed referree);
     event Winner(uint256 indexed game, uint256 index, address participant);
 
@@ -62,13 +62,14 @@ contract RaffleDraw is Ownable {
     }
 
     // if there is no referrer, pass the msg.sender as the _referrer
-    function buyTicket(address _referrer) external {
+    function buyTicket(address _referrer, uint _noOfTicket) external {
         require(_status != _ENTERED, "reentrant call");
         _status = _ENTERED;
 
         require(msg.sender == tx.origin, "smart contracts are not allowed");
         require(!isLocked, "Draw is locked");
-
+        require(_noOfTicket>0, "no of Tickets must be more than 1");
+        uint noOfTicket = _noOfTicket;
         if (
             _referrer != address(0) &&
             _referrer != msg.sender &&
@@ -78,21 +79,28 @@ contract RaffleDraw is Ownable {
             referrers[msg.sender] = _referrer;
         }
 
-        uint256 amountToPool = ticketCost;
+        uint256 amountToPool = ticketCost.mul(noOfTicket);
         address actualReferrer = referrers[msg.sender];
 
         if (actualReferrer != address(0)) {
-            uint256 referrerAward = ticketCost.div(20);
+            uint256 referrerAward = ticketCost.mul(noOfTicket).div(20);
             amountToPool = amountToPool.sub(referrerAward);
             king.safeTransferFrom(msg.sender, actualReferrer, referrerAward);
             emit Referrer(actualReferrer, msg.sender);
         }
         king.safeTransferFrom(msg.sender, poolAccumalator, amountToPool);
         uint256 index = participantsNum;
-        participantsNum = index + 1;
+        uint256 newIndex = index + noOfTicket;
+        require( newIndex <= maxParticipants, "No of Ticket Reached Limit");
+        participantsNum = newIndex;
+        
+        for(uint i = index ; i < participantsNum ; i ++){
+            participants[game][i] = msg.sender;
+            
+        }
 
-        participants[game][index] = msg.sender;
-        emit Ticket(game, msg.sender, index);
+        emit Ticket(game, msg.sender, index,participantsNum);
+
 
         // Lock once it reaches maximum number of participants
         if (participantsNum == maxParticipants) {
