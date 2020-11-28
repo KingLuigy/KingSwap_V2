@@ -18,11 +18,11 @@ contract RoyalDecks is Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     struct Stake {
-        uint96 amountStaked; // $KING amount staked on `startTime`
-        uint96 amountDue; // $KING amount due on (and after) `unlockTime`:
-        // `amountDue = amountStaked * kingFactor/1e+6`
-        uint32 startTime; // UNIX-time the tokens get staked on
-        uint32 unlockTime; // UNIX-time the tokens get locked until
+        uint96 amountStaked;   // $KING amount staked on `startTime`
+        uint96 amountDue;      // $KING amount due on (and after) `unlockTime`:
+                               // `amountDue = amountStaked * kingFactor/1e+6`
+        uint32 startTime;      // UNIX-time the tokens get staked on
+        uint32 unlockTime;     // UNIX-time the tokens get locked until
     }
 
     struct TermSheet {
@@ -83,7 +83,9 @@ contract RoyalDecks is Ownable, ReentrancyGuard {
     event TermsEnabled(uint256 indexed terms);
     event TermsDisabled(uint256 indexed terms);
 
-    constructor() public {}
+    constructor(address _king) public {
+        king = _king;
+    }
 
     function termSheet(uint256 terms) external view returns (TermSheet memory) {
         return termSheets[_validTermsID(terms)];
@@ -153,6 +155,7 @@ contract RoyalDecks is Ownable, ReentrancyGuard {
         uint32 unlockTime = startTime.add(_termSheet.lockSeconds);
         uint96 _amountDue = SafeMath96.fromUint(
             kingAmount.mul(uint256(_termSheet.kingFactor))
+            .div(1e6)
         );
         _addUserStake(
             userStakes,
