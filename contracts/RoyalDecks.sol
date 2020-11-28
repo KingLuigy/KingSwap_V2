@@ -18,19 +18,19 @@ contract RoyalDecks is Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     struct Stake {
-        uint96 amountStaked;   // $KING amount staked on `startTime`
-        uint96 amountDue;      // $KING amount due on (and after) `unlockTime`:
-                               // `amountDue = amountStaked * kingFactor/1e+6`
-        uint32 startTime;      // UNIX-time the tokens get staked on
-        uint32 unlockTime;     // UNIX-time the tokens get locked until
+        uint96 amountStaked; // $KING amount staked on `startTime`
+        uint96 amountDue; // $KING amount due on (and after) `unlockTime`:
+        // `amountDue = amountStaked * kingFactor/1e+6`
+        uint32 startTime; // UNIX-time the tokens get staked on
+        uint32 unlockTime; // UNIX-time the tokens get locked until
     }
 
     struct TermSheet {
-        address nft;           // ERC-721 contract of the NFT to stake
-        uint96 minAmount;      // Min $KING amount to stake (with the NFT)
-        uint32 lockSeconds;    // Staking period in Seconds
-        uint96 kingFactor;     // Multiplier, scaled by 1e+6 (see above)
-        bool enabled;          // If staking is enabled
+        address nft; // ERC-721 contract of the NFT to stake
+        uint96 minAmount; // Min $KING amount to stake (with the NFT)
+        uint32 lockSeconds; // Staking period in Seconds
+        uint96 kingFactor; // Multiplier, scaled by 1e+6 (see above)
+        bool enabled; // If staking is enabled
     }
 
     // All stakes of a user under a term sheet
@@ -53,30 +53,31 @@ contract RoyalDecks is Ownable, ReentrancyGuard {
     TermSheet[] internal termSheets;
 
     // User account => TermSheet ID (index in `termSheets`) => user stakes
-    mapping(address => mapping(uint256 => Stakes)) internal decks;
+    mapping(address => mapping(uint256 => Stakes)) internal stakes;
 
     event Deposit(
         address indexed user,
-        address indexed nft,   // Address of the ERC-721 contract
+        uint256 indexed terms, // Term sheet ID
         uint256 indexed nftId, // ID of the NFT
-        uint256 amountStaked,  // $KING amount staked
-        uint256 amountDue,     // $KING amount to be returned
-        uint256 unlockTime     // UNIX-time when the stake is unlocked
+        uint256 startTime, // UNIX-time the tokens get staked on
+        uint256 amountStaked, // $KING amount staked
+        uint256 amountDue, // $KING amount to be returned
+        uint256 unlockTime // UNIX-time when the stake is unlocked
     );
 
     event Withdraw(
         address indexed user,
-        address indexed nft,   // Address of the ERC-721 contract
+        uint256 indexed terms, // Term sheet ID
         uint256 indexed nftId, // ID of the NFT
-        uint256 amount         // $KING amount withdrawn
+        uint256 startTime // UNIX-time the tokens get staked on
     );
 
     event NewTermSheet(
-        uint256 indexed terms,  // ID of the term sheet
-        address indexed nft,    // Address of the ERC-721 contract
-        uint96 minAmount,       // Min $KING amount to stake
-        uint32 lockSeconds,     // Staking period in seconds
-        uint96 kingFactor       // See explanation above
+        uint256 indexed terms, // ID of the term sheet
+        address indexed nft, // Address of the ERC-721 contract
+        uint96 minAmount, // Min $KING amount to stake
+        uint32 lockSeconds, // Staking period in seconds
+        uint96 kingFactor // See explanation above
     );
 
     event TermsEnabled(uint256 indexed terms);
@@ -93,8 +94,8 @@ contract RoyalDecks is Ownable, ReentrancyGuard {
         view
         returns (uint256[] memory nftIds)
     {
-        Stakes storage stakes = decks[user][_validTermsID(terms)];
-        nftIds = stakes.ids;
+        Stakes storage userStakes = stakes[user][_validTermsID(terms)];
+        nftIds = userStakes.ids;
     }
 
     function stakeInfo(
@@ -102,7 +103,7 @@ contract RoyalDecks is Ownable, ReentrancyGuard {
         uint256 terms,
         uint256 nftId
     ) external view returns (Stake memory) {
-        return decks[_nonZeroAddr(user)][_validTermsID(terms)].data[nftId];
+        return stakes[_nonZeroAddr(user)][_validTermsID(terms)].data[nftId];
     }
 
     function termsLength() external view returns (uint256) {
@@ -147,8 +148,9 @@ contract RoyalDecks is Ownable, ReentrancyGuard {
             nftId
         );
 
-        Stakes storage userStakes = decks[msg.sender][terms];
-        uint256 unlockTime = _termSheet.lockSeconds.add(timeNow());
+        Stakes storage userStakes = stakes[msg.sender][terms];
+        uint32 startTime = timeNow();
+        uint32 unlockTime = startTime.add(_termSheet.lockSeconds);
         uint96 _amountDue = SafeMath96.fromUint(
             kingAmount.mul(uint256(_termSheet.kingFactor))
         );
@@ -158,7 +160,7 @@ contract RoyalDecks is Ownable, ReentrancyGuard {
             Stake(
                 amount,
                 _amountDue,
-                timeNow(),
+                startTime,
                 SafeMath32.fromUint(unlockTime)
             )
         );
@@ -167,8 +169,9 @@ contract RoyalDecks is Ownable, ReentrancyGuard {
 
         emit Deposit(
             msg.sender,
-            _termSheet.nft,
+            terms,
             nftId,
+            startTime,
             kingAmount,
             _amountDue,
             unlockTime
@@ -179,7 +182,7 @@ contract RoyalDecks is Ownable, ReentrancyGuard {
     function withdraw(uint256 terms, uint256 nftId) public nonReentrant {
         address nft = termSheets[_validTermsID(terms)].nft;
 
-        Stakes storage userStakes = decks[msg.sender][terms];
+        Stakes storage userStakes = stakes[msg.sender][terms];
         Stake memory stake = userStakes.data[nftId];
         require(stake.amountDue != 0, "withdraw: unknown or returned stake");
         require(stake.unlockTime >= timeNow(), "withdraw: stake is locked");
@@ -191,7 +194,7 @@ contract RoyalDecks is Ownable, ReentrancyGuard {
         IERC20(king).safeTransfer(msg.sender, stake.amountDue);
         IERC721(nft).safeTransferFrom(address(this), msg.sender, nftId);
 
-        emit Withdraw(msg.sender, nft, nftId, stake.amountDue);
+        emit Withdraw(msg.sender, terms, nftId, stake.startTime);
     }
 
     function _addTerms(TermSheet memory tSheet) internal {
