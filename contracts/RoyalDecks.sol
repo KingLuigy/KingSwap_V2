@@ -11,6 +11,7 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./libraries/SafeMath96.sol";
 import "./libraries/SafeMath32.sol";
 
+
 contract RoyalDecks is Ownable, ReentrancyGuard, ERC721Holder {
     using SafeMath for uint256;
     using SafeMath96 for uint96;
@@ -18,27 +19,29 @@ contract RoyalDecks is Ownable, ReentrancyGuard, ERC721Holder {
 
     using SafeERC20 for IERC20;
 
+    // The $KING amount to return (on withdrawal) is calculated as:
+    // `amountDue = amountStaked * kingFactor/1e+6`             (1)
+
     struct Stake {
         uint96 amountStaked;   // $KING amount staked on `startTime`
-        uint96 amountDue;      // $KING amount due on (and after) `unlockTime`:
-                               // `amountDue = amountStaked * kingFactor/1e+6`
+        uint96 amountDue;      // $KING amount due on (and after) `unlockTime`
         uint32 startTime;      // UNIX-time the tokens get staked on
         uint32 unlockTime;     // UNIX-time the tokens get locked until
     }
 
     struct TermSheet {
-        address nft; // ERC-721 contract of the NFT to stake
-        uint96 minAmount; // Min $KING amount to stake (with the NFT)
-        uint32 lockSeconds; // Staking period in Seconds
-        uint96 kingFactor; // Multiplier, scaled by 1e+6 (see above)
-        bool enabled; // If staking is enabled
+        address nft;           // ERC-721 contract of the NFT to stake
+        uint96 minAmount;      // Min $KING amount to stake (with the NFT)
+        uint32 lockSeconds;    // Staking period in Seconds
+        uint96 kingFactor;     // Multiplier, scaled by 1e+6 (see (1) above)
+        bool enabled;          // If staking is enabled
     }
 
     // All stakes of a user under a term sheet
     struct Stakes {
-        // Set of NFT IDs (note, IDs can't duplicate each other as:
-        // 1. The term sheet explicitly defines the ERC-721 contract address
-        // 2. NFT IDs are unique for a ERC-721 contract )
+        // Set of NFT IDs (IDs are always unique as:
+        // 1. The term sheet explicitly defines the ERC-721 contract
+        // 2. NFT IDs must be unique for a ERC-721 contract )
         uint256[] ids;
         // NFT ID => stake data
         mapping(uint256 => Stake) data;
@@ -53,32 +56,32 @@ contract RoyalDecks is Ownable, ReentrancyGuard, ERC721Holder {
     // Info on each TermSheet
     TermSheet[] internal termSheets;
 
-    // User account => TermSheet ID (index in `termSheets`) => user stakes
+    // User account => term sheet ID (index in `termSheets`) => user stakes
     mapping(address => mapping(uint256 => Stakes)) internal stakes;
 
     event Deposit(
         address indexed user,
         uint256 indexed terms, // Term sheet ID
-        uint256 indexed nftId, // ID of the NFT
-        uint256 startTime, // UNIX-time the tokens get staked on
-        uint256 amountStaked, // $KING amount staked
-        uint256 amountDue, // $KING amount to be returned
-        uint256 unlockTime // UNIX-time when the stake is unlocked
+        uint256 nftId,         // ID of the NFT
+        uint256 startTime,     // UNIX-time the tokens get staked on
+        uint256 amountStaked,  // $KING amount staked
+        uint256 amountDue,     // $KING amount to be returned
+        uint256 unlockTime     // UNIX-time when the stake is unlocked
     );
 
     event Withdraw(
         address indexed user,
         uint256 indexed terms, // Term sheet ID
-        uint256 indexed nftId, // ID of the NFT
-        uint256 startTime // UNIX-time the tokens get staked on
+        uint256 nftId,         // ID of the NFT
+        uint256 startTime      // UNIX-time the tokens get staked on
     );
 
     event NewTermSheet(
         uint256 indexed terms, // ID of the term sheet
-        address indexed nft, // Address of the ERC-721 contract
-        uint96 minAmount, // Min $KING amount to stake
-        uint32 lockSeconds, // Staking period in seconds
-        uint96 kingFactor // See explanation above
+        address indexed nft,   // Address of the ERC-721 contract
+        uint96 minAmount,      // Min $KING amount to stake
+        uint32 lockSeconds,    // Staking period in seconds
+        uint96 kingFactor      // See (1) above
     );
 
     event TermsEnabled(uint256 indexed terms);
