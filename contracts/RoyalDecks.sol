@@ -4,13 +4,14 @@ pragma experimental ABIEncoderV2;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721Holder.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./libraries/SafeMath96.sol";
 import "./libraries/SafeMath32.sol";
 
-contract RoyalDecks is Ownable, ReentrancyGuard {
+contract RoyalDecks is Ownable, ReentrancyGuard, ERC721Holder {
     using SafeMath for uint256;
     using SafeMath96 for uint96;
     using SafeMath32 for uint32;
@@ -168,7 +169,7 @@ contract RoyalDecks is Ownable, ReentrancyGuard {
             )
         );
         amountStaked = amountStaked.add(amount);
-        amountDue = amountDue.sub(_amountDue);
+        amountDue = amountDue.add(_amountDue);
 
         emit Deposit(
             msg.sender,
@@ -188,7 +189,7 @@ contract RoyalDecks is Ownable, ReentrancyGuard {
         Stakes storage userStakes = stakes[msg.sender][terms];
         Stake memory stake = userStakes.data[nftId];
         require(stake.amountDue != 0, "withdraw: unknown or returned stake");
-        require(stake.unlockTime >= timeNow(), "withdraw: stake is locked");
+        require(timeNow() >= stake.unlockTime, "withdraw: stake is locked");
 
         _removeUserStake(userStakes, nftId);
         amountStaked = amountStaked.sub(stake.amountStaked);

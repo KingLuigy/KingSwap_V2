@@ -8,14 +8,24 @@ contract('RoyalDecks', (accounts) => {
 
   before(async () => {
     this.king = await MockERC20.new("$KING", "$KING", '1000000'+e18);
-    this.decks = await RoyalDecks.new(this.king.address);
-
-    this.queen = await MockERC721("Mock QUEEN", "QUEEN", deployer, deployer, 9);
-    this.knight = await MockERC721("Mock KNIGHT", "KNIGHT", deployer, deployer, 9);
-
     await this.king.transfer(alice, '100000'+e18, { from: deployer });
     await this.king.transfer(bob, '100000'+e18, { from: deployer });
     await this.king.transfer(klara, '100000'+e18, { from: deployer });
+
+    this.decks = await RoyalDecks.new(this.king.address);
+    await king.transfer(this.decks.address, '100000'+e18, { from: deployer });
+
+    this.queen = await MockERC721.new("Mock QUEEN", "QUEEN", deployer, 4);
+    await this.queen.safeTransferFrom(deployer, alice, 1, '0x0');
+    await this.queen.safeTransferFrom(deployer, bob, 2, '0x0');
+    await this.queen.safeTransferFrom(deployer, bob, 3, '0x0');
+    await this.queen.safeTransferFrom(deployer, bob, 4, '0x0');
+
+    this.knight = await MockERC721.new("Mock KNIGHT", "KNIGHT", deployer, 4);
+    await this.knight.safeTransferFrom(deployer, alice, 1, '0x0');
+    await this.knight.safeTransferFrom(deployer, alice, 2, '0x0');
+    await this.knight.safeTransferFrom(deployer, klara, 3, '0x0');
+    await this.knight.safeTransferFrom(deployer, klara, 4, '0x0');
   });
 
   context('', () => {
@@ -27,6 +37,52 @@ contract('RoyalDecks', (accounts) => {
 
 
 /*
+await decks.addTerms([{nft: queen.address, minAmount: '1000'+e18, lockSeconds: '300', kingFactor: '1100000', enabled: true}])
+await decks.addTerms([{nft: knight.address, minAmount: '5000'+e18, lockSeconds: '320', kingFactor: '1001000', enabled: false}])
+
+["terms", "nft", "minAmount", "lockSeconds", "kingFactor"].map(k => k + ": " + tx.receipt.logs[0].args[k].toString())
+[
+  'terms: 1',
+  'nft: 0xd15Ee89DD37E62d131e382c8df7911CE872bf74D',
+  'minAmount: 5000000000000000000000',
+  'lockSeconds: 320',
+  'kingFactor: 1001000'
+]
+tx = await decks.enableTerms('1')
+tx.logs[0].event // 'TermsEnabled'
+
+await king.approve(decks.address, '2000'+e18, {from: alice})
+await queen.approve(decks.address, '1', {from: alice})
+tx = await decks.deposit('0', '1', '2000'+e18, {from: alice})
+
+Object.keys(tx.logs[0].args).map(k => k + ': ' + tx.logs[0].args[k].toString())
+[
+  'user: 0x64662e7849A3cF25821777FF5e663755a4121C87',
+  'terms: 0',
+  'nftId: 1',
+  'startTime: 1606645609',
+  'amountStaked: 2000000000000000000000',
+  'amountDue: 2200000000000000000000',
+  'unlockTime: 1606645909'
+]
+(await decks.amountStaked()).toString() // '2000000000000000000000'
+(await decks.amountDue()).toString() // '2200000000000000000000'
+
+await decks.stakeInfo(alice, '0', '1')
+[
+  amountStaked: '2000000000000000000000',
+  amountDue: '2200000000000000000000',
+  startTime: '1606645609',
+  unlockTime: '1606645909'
+]
+
+await decks.withdraw('0', '1', { from: alice }) //  reason: 'withdraw: stake is locked'
+await decks.withdraw('0', '2', { from: alice }) // reason: 'withdraw: unknown or returned stake'
+
+await king.approve(decks.address, '5000'+e18, {from: alice})
+
+
+
 const t = await MockRoyalDecks.new()
 await t.__ids()
 // []

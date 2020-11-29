@@ -7,7 +7,8 @@ import "../RoyalDecks.sol";
 contract MockRoyalDecks is RoyalDecks {
     Stakes internal __stakes;
 
-    constructor() public {}
+    constructor(address king) public RoyalDecks(king) {
+    }
 
     function __addUserStake(uint256 nftId, Stake memory stake) external {
         _addUserStake(__stakes, nftId, stake);
