@@ -5,7 +5,7 @@ pragma experimental ABIEncoderV2;
 import "../RoyalDecks.sol";
 
 contract MockRoyalDecks is RoyalDecks {
-    Stakes internal __stakes;
+    UserStakes internal __stakes;
 
     constructor(address king) public RoyalDecks(king) {
     }

@@ -37,13 +37,11 @@ contract RoyalDecks is Ownable, ReentrancyGuard, ERC721Holder {
         bool enabled;          // If staking is enabled
     }
 
-    // All stakes of a user under a term sheet
-    struct Stakes {
-        // Set of NFT IDs (IDs are always unique as:
-        // 1. The term sheet explicitly defines the ERC-721 contract
-        // 2. NFT IDs must be unique for a ERC-721 contract )
+    // All stakes of a user
+    struct UserStakes {
+        // Set of (unique) stake IDs (see `encodeStakeId` function)
         uint256[] ids;
-        // NFT ID => stake data
+        // stake ID => stake data
         mapping(uint256 => Stake) data;
     }
 
@@ -56,14 +54,12 @@ contract RoyalDecks is Ownable, ReentrancyGuard, ERC721Holder {
     // Info on each TermSheet
     TermSheet[] internal termSheets;
 
-    // User account => term sheet ID (index in `termSheets`) => user stakes
-    mapping(address => mapping(uint256 => Stakes)) internal stakes;
+    // User account => user stakes
+    mapping(address => UserStakes) internal stakes;
 
     event Deposit(
         address indexed user,
-        uint256 indexed terms, // Term sheet ID
-        uint256 nftId,         // ID of the NFT
-        uint256 startTime,     // UNIX-time the tokens get staked on
+        uint256 stakeId,       // ID of the NFT
         uint256 amountStaked,  // $KING amount staked
         uint256 amountDue,     // $KING amount to be returned
         uint256 unlockTime     // UNIX-time when the stake is unlocked
@@ -71,9 +67,7 @@ contract RoyalDecks is Ownable, ReentrancyGuard, ERC721Holder {
 
     event Withdraw(
         address indexed user,
-        uint256 indexed terms, // Term sheet ID
-        uint256 nftId,         // ID of the NFT
-        uint256 startTime      // UNIX-time the tokens get staked on
+        uint256 stakeId        // ID of the NFT
     );
 
     event NewTermSheet(
@@ -91,25 +85,42 @@ contract RoyalDecks is Ownable, ReentrancyGuard, ERC721Holder {
         king = _king;
     }
 
+    // Stake ID uniquely identifies a stake
+    // (note a limitation on nftId range supported)
+    function encodeStakeId(address nft, uint256 nftId, uint256 startTime)
+        public
+        pure
+        returns(uint256)
+    {
+        require(nftId < 2**32, "RDeck::nftId_EXCEEDS_64_BITS");
+        return (uint256(nft) << 96) | (nftId << 32) | startTime;
+    }
+
+    function decodeStakeId(uint256 stakeId)
+        public
+        pure
+        returns(address nft, uint256 nftId, uint256 startTime)
+    {
+        nft = address(stakeId >> 96);
+        nftId = (stakeId >> 32) & (2**64 - 1);
+        startTime = stakeId & (2**32 - 1);
+    }
+
     function termSheet(uint256 terms) external view returns (TermSheet memory) {
         return termSheets[_validTermsID(terms)];
     }
 
-    function stakedNfts(address user, uint256 terms)
-        external
-        view
-        returns (uint256[] memory nftIds)
+    function stakeIds(address user) external view returns (uint256[] memory)
     {
-        Stakes storage userStakes = stakes[user][_validTermsID(terms)];
-        nftIds = userStakes.ids;
+        UserStakes storage userStakes = stakes[user];
+        return userStakes.ids;
     }
 
-    function stakeInfo(
+    function stakeData(
         address user,
-        uint256 terms,
-        uint256 nftId
+        uint256 stakeId
     ) external view returns (Stake memory) {
-        return stakes[_nonZeroAddr(user)][_validTermsID(terms)].data[nftId];
+        return stakes[_nonZeroAddr(user)].data[stakeId];
     }
 
     function termsLength() external view returns (uint256) {
@@ -147,15 +158,15 @@ contract RoyalDecks is Ownable, ReentrancyGuard, ERC721Holder {
             "deposit: too small kingAmount"
         );
 
-        IERC20(king).safeTransferFrom(msg.sender, address(this), amount);
-        IERC721(_termSheet.nft).safeTransferFrom(
-            msg.sender,
-            address(this),
-            nftId
-        );
+        uint256 stakeId = encodeStakeId(_termSheet.nft, nftId, now);
 
-        Stakes storage userStakes = stakes[msg.sender][terms];
-        uint32 startTime = timeNow();
+        IERC20(king)
+            .safeTransferFrom(msg.sender, address(this), amount);
+        IERC721(_termSheet.nft)
+            .safeTransferFrom(msg.sender, address(this), nftId);
+
+        UserStakes storage userStakes = stakes[msg.sender];
+        uint32 startTime = SafeMath32.fromUint(now);
         uint32 unlockTime = startTime.add(_termSheet.lockSeconds);
         uint96 _amountDue = SafeMath96.fromUint(
             kingAmount.mul(uint256(_termSheet.kingFactor))
@@ -163,7 +174,7 @@ contract RoyalDecks is Ownable, ReentrancyGuard, ERC721Holder {
         );
         _addUserStake(
             userStakes,
-            nftId,
+            stakeId,
             Stake(
                 amount,
                 _amountDue,
@@ -176,9 +187,7 @@ contract RoyalDecks is Ownable, ReentrancyGuard, ERC721Holder {
 
         emit Deposit(
             msg.sender,
-            terms,
-            nftId,
-            startTime,
+            stakeId,
             kingAmount,
             _amountDue,
             unlockTime
@@ -186,22 +195,22 @@ contract RoyalDecks is Ownable, ReentrancyGuard, ERC721Holder {
     }
 
     // Withdraw staked 1 NFT and entire $KING token amount due
-    function withdraw(uint256 terms, uint256 nftId) public nonReentrant {
-        address nft = termSheets[_validTermsID(terms)].nft;
+    function withdraw(uint256 stakeId) public nonReentrant {
+        (address nft, uint256 nftId, ) = decodeStakeId(stakeId);
 
-        Stakes storage userStakes = stakes[msg.sender][terms];
-        Stake memory stake = userStakes.data[nftId];
+        UserStakes storage userStakes = stakes[msg.sender];
+        Stake memory stake = userStakes.data[stakeId];
         require(stake.amountDue != 0, "withdraw: unknown or returned stake");
-        require(timeNow() >= stake.unlockTime, "withdraw: stake is locked");
+        require(now >= stake.unlockTime, "withdraw: stake is locked");
 
-        _removeUserStake(userStakes, nftId);
+        _removeUserStake(userStakes, stakeId);
         amountStaked = amountStaked.sub(stake.amountStaked);
         amountDue = amountDue.sub(stake.amountDue);
 
         IERC20(king).safeTransfer(msg.sender, stake.amountDue);
         IERC721(nft).safeTransferFrom(address(this), msg.sender, nftId);
 
-        emit Withdraw(msg.sender, terms, nftId, stake.startTime);
+        emit Withdraw(msg.sender, stakeId);
     }
 
     function _addTerms(TermSheet memory tSheet) internal {
@@ -251,24 +260,24 @@ contract RoyalDecks is Ownable, ReentrancyGuard, ERC721Holder {
     }
 
     function _addUserStake(
-        Stakes storage userStakes,
-        uint256 nftId,
+        UserStakes storage userStakes,
+        uint256 stakeId,
         Stake memory stake
     ) internal {
         require(
-            userStakes.data[nftId].amountDue == 0,
+            userStakes.data[stakeId].amountDue == 0,
             "RDeck:DUPLICATED_NFT_ID"
         );
-        userStakes.data[nftId] = stake;
-        userStakes.ids.push(nftId);
+        userStakes.data[stakeId] = stake;
+        userStakes.ids.push(stakeId);
     }
 
-    function _removeUserStake(Stakes storage userStakes, uint256 nftId)
+    function _removeUserStake(UserStakes storage userStakes, uint256 stakeId)
         internal
     {
-        require(userStakes.data[nftId].amountDue != 0, "RDeck:INVALID_NFT_ID");
-        userStakes.data[nftId].amountDue = 0;
-        _removeArrayElement(userStakes.ids, nftId);
+        require(userStakes.data[stakeId].amountDue != 0, "RDeck:INVALID_STAKE_ID");
+        userStakes.data[stakeId].amountDue = 0;
+        _removeArrayElement(userStakes.ids, stakeId);
     }
 
     // Assuming the given array does contain the given element
@@ -292,17 +301,13 @@ contract RoyalDecks is Ownable, ReentrancyGuard, ERC721Holder {
         arr.pop();
     }
 
+    function _revertZeroAddress(address _address) internal pure {
+        require(_address != address(0), "RDeck::ZERO_ADDRESS");
+    }
+
     function _nonZeroAddr(address _address) private pure returns (address) {
         _revertZeroAddress(_address);
         return _address;
-    }
-
-    function timeNow() private view returns (uint32) {
-        return SafeMath32.fromUint(now);
-    }
-
-    function _revertZeroAddress(address _address) internal pure {
-        require(_address != address(0), "RDeck::ZERO_ADDRESS");
     }
 
     function _validTermsID(uint256 terms) private view returns (uint256) {

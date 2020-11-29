@@ -8,7 +8,6 @@ const MockERC721 = artifacts.require('MockERC721');
 contract('RoyalDecks', (accounts) => {
   const e18 = '000000000000000000';
   const [ deployer, alice, bob, klara, , anybody ] = accounts;
-  const decodeLogs = (logs) => logs.map(l => Object.keys(l.args).reduce((a, k) => k.match(/^[0-9_]/) ? a : Object.assign(a, {[k]: l.args[k].toString()}), {event: l.event}))
 
   before(async () => {
     this.king = await MockERC20.new("$KING", "$KING", '1000000'+e18);
@@ -83,30 +82,36 @@ contract('RoyalDecks', (accounts) => {
       await this.king.approve(this.decks.address, '2000' + e18, {from: alice})
       await this.queen.approve(this.decks.address, '1', {from: alice})
       tx = await this.decks.deposit('0', '1', '2000' + e18, {from: alice})
-      let unlockTime = parseInt(tx.logs[0].args.unlockTime.toString());
+      let stake0StartTime = parseInt((await web3.eth.getBlock(tx.receipt.blockHash)).timestamp.toString());
+      let stake0UnlockTime = parseInt(tx.logs[0].args.unlockTime.toString());
+
+      let stake0Id = (await this.decks.encodeStakeId(this.queen.address, '1', `${stake0StartTime}`)).toString();
+      let stake0decodedId = await this.decks.decodeStakeId(stake0Id);
+      assert.equal(stake0decodedId.nft.toLowerCase(), this.queen.address.toLowerCase());
+      assert.equal(stake0decodedId.nftId.toString(), '1');
+      assert.equal(stake0decodedId.startTime.toString(), `${stake0StartTime}`);
+
       assert.equal(tx.logs[0].args.user, alice);
-      assert.equal(tx.logs[0].args.terms, '0');
-      assert.equal(tx.logs[0].args.nftId, '1');
+      assert.equal(tx.logs[0].args.stakeId.toString(), stake0Id);
       assert.equal(tx.logs[0].args.amountStaked, '2000000000000000000000');
       assert.equal(tx.logs[0].args.amountDue, '2200000000000000000000');
-      assert.equal(tx.logs[0].args.unlockTime, `${ 300 + parseInt(tx.logs[0].args.startTime.toString()) }`);
+      assert.equal(tx.logs[0].args.unlockTime, `${ 300 + stake0StartTime}`);
       assert.equal((await this.decks.amountStaked()).toString(), '2000000000000000000000');
       assert.equal((await this.decks.amountDue()).toString(), '2200000000000000000000');
 
-      let stake0 = await this.decks.stakeInfo(alice, '0', '1')
+      let stake0 = await this.decks.stakeData(alice, stake0Id)
       assert.equal(stake0.amountStaked, '2000000000000000000000');
       assert.equal(stake0.amountDue, '2200000000000000000000');
-      assert.equal(stake0.unlockTime, `${300 + parseInt(stake0.startTime.toString())}`);
+      assert.equal(stake0.unlockTime, `${300 + stake0StartTime}`);
 
-      await expectRevert(this.decks.withdraw('0', '1', {from: alice}), 'withdraw: stake is locked');
-      await expectRevert(this.decks.withdraw('0', '2', {from: alice}), 'withdraw: unknown or returned stake');
-      await expectRevert(this.decks.withdraw('0', '1', {from: bob}), 'withdraw: unknown or returned stake');
+      await expectRevert(this.decks.withdraw(stake0Id, {from: alice}), 'withdraw: stake is locked');
+      await expectRevert(this.decks.withdraw(stake0Id, {from: bob}), 'withdraw: unknown or returned stake');
 
-      await time.increaseTo(unlockTime);
-      await this.decks.withdraw('0', '1', {from: alice})
+      await time.increaseTo(stake0UnlockTime);
+      await this.decks.withdraw(stake0Id, {from: alice})
       assert.equal((await this.decks.amountStaked()).toString(), '0');
       assert.equal((await this.decks.amountDue()).toString(), '0');
-      await expectRevert(this.decks.withdraw('0', '1', {from: alice}), 'withdraw: unknown or returned stake');
+      await expectRevert(this.decks.withdraw(stake0Id, {from: alice}), 'withdraw: unknown or returned stake');
     });
 
     xit('Should run "2nd draft bulk" tests', async () => {
