@@ -25,7 +25,7 @@ contract('RoyalDecks', (accounts) => {
       assert.equal((await this.__t.__mockArr(2)).toString(), els[2])
     });
 
-    xit('Should remove the 1st element', async () => {
+    it('Should remove the 1st element', async () => {
       await this.__t.__removeArrayElement(els[0])
 
       assert.equal((await this.__t.__mockArrLength()).toString(), '2')
@@ -33,7 +33,7 @@ contract('RoyalDecks', (accounts) => {
       assert.equal((await this.__t.__mockArr(1)).toString(), els[2])
     });
 
-    xit('Should remove the 2nd element', async () => {
+    it('Should remove the 2nd element', async () => {
       await this.__t.__removeArrayElement(els[1])
 
       assert.equal((await this.__t.__mockArrLength()).toString(), '2')
@@ -41,7 +41,7 @@ contract('RoyalDecks', (accounts) => {
       assert.equal((await this.__t.__mockArr(1)).toString(), els[2])
     });
 
-    xit('Should remove the last element', async () => {
+    it('Should remove the last element', async () => {
       await this.__t.__removeArrayElement(els[2])
 
       assert.equal((await this.__t.__mockArrLength()).toString(), '2')
@@ -49,7 +49,7 @@ contract('RoyalDecks', (accounts) => {
       assert.equal((await this.__t.__mockArr(1)).toString(), els[1])
     });
 
-    xit('Should remove all elements', async () => {
+    it('Should remove all elements', async () => {
       await this.__t.__removeArrayElement(els[1])
       assert.equal((await this.__t.__mockArrLength()).toString(), '2')
       assert.equal((await this.__t.__mockArr(0)).toString(), els[0])
@@ -63,7 +63,7 @@ contract('RoyalDecks', (accounts) => {
       assert.equal((await this.__t.__mockArrLength()).toString(), '0')
     });
 
-    xit('Should remove all elements (#2)', async () => {
+    it('Should remove all elements (#2)', async () => {
       await this.__t.__removeArrayElement(els[0])
       assert.equal((await this.__t.__mockArrLength()).toString(), '2')
       assert.equal((await this.__t.__mockArr(0)).toString(), els[1])
@@ -77,7 +77,7 @@ contract('RoyalDecks', (accounts) => {
       assert.equal((await this.__t.__mockArrLength()).toString(), '0')
     });
 
-    xit('Should remove all elements (#3)', async () => {
+    it('Should remove all elements (#3)', async () => {
       await this.__t.__removeArrayElement(els[2])
       assert.equal((await this.__t.__mockArrLength()).toString(), '2')
       assert.equal((await this.__t.__mockArr(0)).toString(), els[0])
@@ -91,7 +91,7 @@ contract('RoyalDecks', (accounts) => {
       assert.equal((await this.__t.__mockArrLength()).toString(), '0')
     });
 
-    xit('Should remove 12 elements', async () => {
+    it('Should remove 12 elements', async () => {
       await this.__t.__addArrElements([ '3', '4', '5', '6', '7', '8', '9', '10', '11' ]);
       assert.equal((await this.__t.__mockArrLength()).toString(), '12')
 
@@ -119,7 +119,7 @@ contract('RoyalDecks', (accounts) => {
   });
 
   context('TODO: create tests from "bulk" test bellow (#1)', () => {
-    xit('Should run 1st "bulk" test', async () => {
+    it('Should run 1st "bulk" test', async () => {
       const t = await RoyalDecks.new(anybody)
       assert.equal((await t.__ids()).length, 0);
       assert.equal((await t.__stake(0)).amountStaked.toString(), '0');
@@ -248,7 +248,7 @@ contract('RoyalDecks', (accounts) => {
       await this.knight.approve(this.decks.address, '4', { from: klara })
     });
 
-    xit('Should run 2nd "bulk" test', async () => {
+    it('Should run 2nd "bulk" test', async () => {
       let tx;
       tx = await this.decks.enableTerms('1');
       assert.equal(tx.logs[0].event, 'TermsEnabled');
