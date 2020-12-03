@@ -273,23 +273,25 @@ contract RoyalDecks is Ownable, ReentrancyGuard {
 
         // First, compute "weights" for rewards distribution
         address[MAX_AIR_POOLS_QTY] memory nfts;
-        uint256[MAX_AIR_POOLS_QTY] memory poolWeights;
+        uint256[MAX_AIR_POOLS_QTY] memory weights;
         uint256 totalWeight;
         uint256 qty = airPools.length;
-        for (uint i = 0; i < qty; i++) {
+        uint256 k = 0;
+        for (uint256 i = 0; i < qty; i++) {
             (address nft, uint256 weight) = _unpackAirPoolData(airPools[i]);
             uint256 nftQty = IERC721(nft).balanceOf(address(this));
-            nfts[i] = nft;
-            uint256 poolWeight = nftQty.mul(weight);
-            poolWeights[i] = poolWeight;
-            totalWeight = totalWeight.add(poolWeight);
+            if (nftQty == 0 || weight == 0) continue;
+            nfts[k] = nft;
+            weights[k] = weight;
+            k++;
+            totalWeight = totalWeight.add(nftQty.mul(weight));
         }
 
         // Then account for rewards in pools
-        for (uint i = 0; i < qty; i++) {
+        for (uint i = 0; i <= k; i++) {
             address nft = nfts[i];
             accAirKingPerNft[nft] = accAirKingPerNft[nft].add(
-                reward.mul(poolWeights[i]).div(totalWeight) // always non-zero
+                reward.mul(weights[i]).div(totalWeight) // can't be zero
             );
         }
         emit Airdrop(reward);
@@ -393,31 +395,25 @@ contract RoyalDecks is Ownable, ReentrancyGuard {
 
         UserStakes storage userStakes = stakes[msg.sender];
         Stake memory stake = userStakes.data[stakeId];
+        require(
+            isEmergency || now >= stake.unlockTime,
+            "withdraw: stake is locked"
+        );
+
         uint96 amountDue = stake.amountDue;
         require(amountDue != 0, "withdraw: unknown or returned stake");
 
-        // Pended airdrop rewards
-        uint96 airdrop = 0;
-        {
+        { // Pended airdrop rewards
             uint256 accAir = accAirKingPerNft[nft];
             if (accAir > 1) {
                 uint256 bias = accAirKingBias[stakeId];
-                airdrop = SafeMath96.fromUint(
-                    accAir > bias
-                    ? accAir.sub(accAirKingBias[stakeId])
-                    : accAir
+                if (accAir > bias) amountDue = amountDue.add(
+                    SafeMath96.fromUint(accAir.sub(bias))
                 );
-                amountDue = amountDue.add(airdrop);
             }
         }
 
-        uint96 amountToUser;
-        if (isEmergency) {
-            amountToUser = stake.amountStaked;
-        } else {
-            require(now >= stake.unlockTime, "withdraw: stake is locked");
-            amountToUser = stake.amountDue;
-        }
+        uint96 amountToUser = isEmergency ? stake.amountStaked : amountDue;
 
         _removeUserStake(userStakes, stakeId);
         kingDue = kingDue.sub(amountDue);
