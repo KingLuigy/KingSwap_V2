@@ -5,24 +5,24 @@ pragma experimental ABIEncoderV2;
 import "../RoyalDecks.sol";
 
 contract MockRoyalDecks is RoyalDecks {
-    UserStakes internal __stakes;
+    UserStakes internal _mockStakes;
 
     constructor(address king) public RoyalDecks(king) {
     }
 
     function __addUserStake(uint256 nftId, Stake memory stake) external {
-        _addUserStake(__stakes, nftId, stake);
+        _addUserStake(_mockStakes, nftId, stake);
     }
 
     function __removeUserStake(uint256 nftId) external {
-        _removeUserStake(__stakes, nftId);
+        _removeUserStake(_mockStakes, nftId);
     }
 
     function __ids() external view returns (uint256[] memory) {
-        return __stakes.ids;
+        return _mockStakes.ids;
     }
 
     function __stake(uint256 nftId) external view returns (Stake memory) {
-        return __stakes.data[nftId];
+        return _mockStakes.data[nftId];
     }
 }
