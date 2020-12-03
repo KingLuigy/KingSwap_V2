@@ -6,6 +6,7 @@ import "../RoyalDecks.sol";
 
 contract MockRoyalDecks is RoyalDecks {
     UserStakes internal _mockStakes;
+    uint256[] public __mockArr;
 
     constructor(address king) public RoyalDecks(king) {
     }
@@ -24,5 +25,19 @@ contract MockRoyalDecks is RoyalDecks {
 
     function __stake(uint256 nftId) external view returns (Stake memory) {
         return _mockStakes.data[nftId];
+    }
+
+    function __addArrElements(uint256[] calldata els) external {
+        for (uint256 i = 0; i < els.length; i++) {
+            __mockArr.push(els[i]);
+        }
+    }
+
+    function __removeArrayElement(uint256 el) external {
+      _removeArrayElement(__mockArr, el);
+   }
+
+    function __mockArrLength() external view returns(uint256) {
+        return __mockArr.length;
     }
 }

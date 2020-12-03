@@ -254,18 +254,59 @@ contract RoyalDecks is Ownable, ReentrancyGuard {
         emit EmergencyWithdraw(msg.sender, stakeId);
     }
 
+    // Account for $KING amount the contact has got as airdrops for NFTs staked
+    // !!! Be cautious of high gas cost
+    function collectAirdrops() external nonReentrant {
+        if (block.number <= lastAirBlock) return;
+        lastAirBlock = SafeMath32.fromUint(block.number);
+
+        // $KING balance exceeding `kingReserves` treated as airdrop rewards
+        uint256 reward;
+        {
+            uint256 _kingReserves = kingReserves;
+            uint256 kingBalance = IERC20(king).balanceOf(address(this));
+            if (kingBalance <= _kingReserves) return;
+            reward = kingBalance.sub(_kingReserves);
+            kingReserves = SafeMath96.fromUint(_kingReserves.add(reward));
+            kingDue = kingDue.add(uint96(reward));
+        }
+
+        // First, compute "weights" for rewards distribution
+        address[MAX_AIR_POOLS_QTY] memory nfts;
+        uint256[MAX_AIR_POOLS_QTY] memory poolWeights;
+        uint256 totalWeight;
+        uint256 qty = airPools.length;
+        for (uint i = 0; i < qty; i++) {
+            (address nft, uint256 weight) = _unpackAirPoolData(airPools[i]);
+            uint256 nftQty = IERC721(nft).balanceOf(address(this));
+            nfts[i] = nft;
+            uint256 poolWeight = nftQty.mul(weight);
+            poolWeights[i] = poolWeight;
+            totalWeight = totalWeight.add(poolWeight);
+        }
+
+        // Then account for rewards in pools
+        for (uint i = 0; i < qty; i++) {
+            address nft = nfts[i];
+            accAirKingPerNft[nft] = accAirKingPerNft[nft].add(
+                reward.mul(poolWeights[i]).div(totalWeight) // always non-zero
+            );
+        }
+        emit Airdrop(reward);
+    }
+
     function addTerms(TermSheet[] memory _termSheets) public onlyOwner {
         for (uint256 i = 0; i < _termSheets.length; i++) {
             _addTermSheet(_termSheets[i]);
         }
     }
 
-    function enableTerms(uint256 termsId) external {
+    function enableTerms(uint256 termsId) external onlyOwner {
         termSheets[_validTermsID(termsId)].enabled = true;
         emit TermsEnabled(termsId);
     }
 
-    function disableTerms(uint256 termsId) external {
+    function disableTerms(uint256 termsId) external onlyOwner {
         termSheets[_validTermsID(termsId)].enabled = false;
         emit TermsDisabled(termsId);
     }
@@ -326,47 +367,6 @@ contract RoyalDecks is Ownable, ReentrancyGuard {
         emit Removed(amount);
     }
 
-    // Account for $KING amount the contact has got as airdrops for NFTs staked
-    // !!! Be cautious of high gas cost
-    function collectAirdrops() public {
-        if (block.number <= lastAirBlock) return;
-        lastAirBlock = SafeMath32.fromUint(block.number);
-
-        // $KING balance exceeding `kingReserves` treated as airdrop rewards
-        uint256 reward;
-        {
-            uint256 _kingReserves = kingReserves;
-            uint256 kingBalance = IERC20(king).balanceOf(address(this));
-            if (kingBalance <= _kingReserves) return;
-            reward = kingBalance.sub(_kingReserves);
-            kingReserves = SafeMath96.fromUint(_kingReserves.add(reward));
-            kingDue = kingDue.add(uint96(reward));
-        }
-
-        // First, compute "weights" for rewards distribution
-        address[MAX_AIR_POOLS_QTY] memory nfts;
-        uint256[MAX_AIR_POOLS_QTY] memory poolWeights;
-        uint256 totalWeight;
-        uint256 qty = airPools.length;
-        for (uint i = 0; i < qty; i++) {
-            (address nft, uint256 weight) = _unpackAirPoolData(airPools[i]);
-            uint256 nftQty = IERC721(nft).balanceOf(address(this));
-            nfts[i] = nft;
-            uint256 poolWeight = nftQty.mul(weight);
-            poolWeights[i] = poolWeight;
-            totalWeight = totalWeight.add(poolWeight);
-        }
-
-        // Then account for rewards in pools
-        for (uint i = 0; i < qty; i++) {
-            address nft = nfts[i];
-            accAirKingPerNft[nft] = accAirKingPerNft[nft].add(
-                reward.mul(poolWeights[i]).div(totalWeight) // always non-zero
-            );
-        }
-        emit Airdrop(reward);
-    }
-
     // Equals to `bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"))`
     bytes4 private constant _ERC721_RECEIVED = 0x150b7a02;
     // Equals to `bytes4(keccak256("RoyalDecks"))`
@@ -416,7 +416,7 @@ contract RoyalDecks is Ownable, ReentrancyGuard {
             amountToUser = stake.amountStaked;
         } else {
             require(now >= stake.unlockTime, "withdraw: stake is locked");
-            amountToUser = stake.amountDue.add(airdrop);
+            amountToUser = stake.amountDue;
         }
 
         _removeUserStake(userStakes, stakeId);
@@ -505,11 +505,9 @@ contract RoyalDecks is Ownable, ReentrancyGuard {
                 do {
                     uint256 replacing = replaced;
                     replaced = arr[lastIndex - 1];
-                    arr.pop();
                     lastIndex--;
                     arr[lastIndex] = replacing;
                 } while (replaced != el && lastIndex != 0);
-                return;
             }
         }
         // Remove the last (and quite probably the only) element
