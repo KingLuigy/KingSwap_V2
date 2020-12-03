@@ -498,18 +498,27 @@ contract('RoyalDecks', (accounts) => {
       // 12500 x 6/(1x6+3x3+2x1) + 0
       assert.equal((await this.decks.pendedAirdrop(stake5Id)).toString(), '4411' + '764705882352941176')
 
-      assert.equal((await this.decks.kingReserves()).toString(), `${100000 + 2000 + 12000 + 8000 + 40000 + 60000 + 2500 + 12500}` + e18andOne);
-      assert.equal((await this.king.balanceOf(this.decks.address)).toString(), `${222000 + 2500 + 12500}` + e18andOne);
-      assert.equal((await this.decks.kingDue()).toString(), `${2200 + 13200 + 8880 + 40040 + 60060 + 2500 + 12500}` + e18andOne);
+      assert.equal(
+          (await this.decks.kingReserves()).toString(),
+          `${100000 + 2000 + 12000 + 8000 + 40000 + 60000 + 2500 + 12500}` + e18andOne,
+      );
+      assert.equal(
+          (await this.king.balanceOf(this.decks.address)).toString(),
+          `${222000 + 2500 + 12500}` + e18andOne,
+      );
+      assert.equal(
+          (await this.decks.kingDue()).toString(),
+          `${2200 + 13200 + 8880 + 40040 + 60060 + 2500 + 12500}` + e18andOne,
+      );
 
       await time.increaseTo(stake0.unlockTime);
 
       // stake0 withdrawn
+      let balanceBefore = await this.king.balanceOf(alice)
       await this.decks.withdraw(stake0Id, { from: alice })
-
-      // assert.equal((await this.decks.kingReserves()).toString(), `${222000 - 2200 + 2500 + 12500}` + e18andOne);
-      // assert.equal((await this.king.balanceOf(this.decks.address)).toString(), `${222000 - 2200 + 2500 + 12500}` + e18andOne);
-      // assert.equal((await this.decks.kingDue()).toString(), `${13200 + 8880 + 40040 + 60060 + 2500 + 12500}` + e18andOne);
+      let balanceAfter = await this.king.balanceOf(alice)
+      // 2200. + 3277.310924369747899159
+      assert.equal(balanceAfter.sub(balanceBefore).toString(), '5477310924369747899159')
 
       await time.increaseTo(stake3.unlockTime);
 
@@ -538,10 +547,6 @@ contract('RoyalDecks', (accounts) => {
       // 13200. + 3277.310924369747899159
       assert.equal(balanceAfter.sub(balanceBefore).toString(), 16477310924369747899159)
 
-      // assert.equal((await this.decks.kingReserves()).toString(), `${222000 - 2200 - 13200 - 40040 - 60060 + 2500}` + e18andOne);
-      // assert.equal((await this.king.balanceOf(this.decks.address)).toString(), `${106500 + 2500}` + e18andOne);
-      // assert.equal((await this.decks.kingDue()).toString(), `${8880 + 2500}` + e18andOne);
-
       assert.equal(await this.decks.emergencyWithdrawEnabled(), false);
       await this.decks.enableEmergencyWithdraw();
       assert.equal(await this.decks.emergencyWithdrawEnabled(), true);
@@ -553,6 +558,7 @@ contract('RoyalDecks', (accounts) => {
       await expectRevert(this.decks.withdraw(stake2Id, { from: bob }), "withdraw: stake is locked");
       await this.decks.emergencyWithdraw(stake2Id, { from: bob })
       balanceAfter = await this.king.balanceOf(bob)
+      // 8000. + 0
       assert.equal(balanceAfter.sub(balanceBefore).toString(), '8000' + e18)
 
       // Rewards left by the stake emergency withdrawal gets "collected"
@@ -569,10 +575,21 @@ contract('RoyalDecks', (accounts) => {
       // 1e-18 + 3085.882352941176470588 + 4411.764705882352941176
       assert.equal(balanceAfter.sub(balanceBefore).toString(), '7497647058823529411765')
 
-      // assert.equal((await this.decks.kingReserves()).toString(), `${106500 - 90000 - 8880 + 2500}` + e18);
-      // assert.equal((await this.king.balanceOf(this.decks.address)).toString(), `${7620 + 880 + 2500}` + e18);
+      /* Stake $KING  %Out    Airdrop rewards            Total Out
+         ------------------------------------------------------------------------
+         #0:    2000 +  200. + 3277.310924369747899159 =  5477.310924369747899159
+         #1:   12000 + 1200. + 3277.310924369747899159 = 16477.310924369747899159
+         #2:    8000 +  880. + -880                    =  8000.000000000000000000
+         #3:   40000 +   40. + 1092.436974789915966386 = 41132.436974789915966386
+         #4:   60000 +   60. +  735.294117647058823529 = 60795.294117647058823529
+         #5:   1e-18 +    0. + 3085.882352941176470588        .
+                             + 4411.764705882352941176 =  7497.647058823529411765
+             =122000  =2380  =15000                    =139380                 */
+
+      // (100000. - 90000.) - 2380. = 7620. *e+18
+      assert.equal((await this.decks.kingReserves()).toString(), '7620' + '000000000000000003');
+      assert.equal((await this.king.balanceOf(this.decks.address)).toString(), '7620' + '000000000000000003');
       assert.equal(Math.abs(parseInt(await this.decks.kingDue()).toString()) < 10, true)
     });
   });
 });
-
