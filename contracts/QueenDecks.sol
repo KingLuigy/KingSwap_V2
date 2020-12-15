@@ -62,7 +62,7 @@ contract QueenDecks is Ownable, ReentrancyGuard {
 
     // Emergency fees factor, scaled by 1e+4:
     // `fees = Stake.amount * emergencyFeesFactor / 1e+4`
-    uint16 emergencyFeesFactor = 500; // i.e. 5%
+    uint16 public emergencyFeesFactor = 500; // i.e. 5%
 
     // Number of stakes made so far
     uint48 public stakeQty;
@@ -181,13 +181,13 @@ contract QueenDecks is Ownable, ReentrancyGuard {
         return stakes[_nonZeroAddr(user)].data[stakeId];
     }
 
-    function getAmountDue(uint256 stakeId, address user)
+    function getAmountDue(address user, uint256 stakeId)
         external
         view
-        returns (uint256)
+        returns (uint256 totalDue, uint256 rewardDue)
     {
         Stake memory stake = stakes[_nonZeroAddr(user)].data[stakeId];
-        return stake.amount == 0 ? 0 : _rewardDue(stake, now).add(stake.amount);
+        (totalDue, rewardDue) = _amountDueOn(stake, now);
     }
 
     function termSheet(uint256 termsId)
@@ -324,8 +324,7 @@ contract QueenDecks is Ownable, ReentrancyGuard {
         Stake memory stake = userStakes.data[stakeId];
 
         require(stake.amount != 0, "QDeck:unknown or returned stake");
-        uint256 reward = _rewardDue(stake, now);
-        uint256 amountDue = stake.amount.add(reward);
+        (uint256 amountDue, uint256 reward) = _amountDueOn(stake, now);
 
         uint256 amountToUser;
         if (isEmergency) {
@@ -343,6 +342,10 @@ contract QueenDecks is Ownable, ReentrancyGuard {
             require(now >= stake.unlockTime, "withdraw: stake is locked");
             amountToUser = amountDue;
             emit Withdraw(msg.sender, stakeId, amountToUser);
+        }
+
+        if (now > stake.lastRewardTime) {
+            userStakes.data[stakeId].lastRewardTime = safe32(now);
         }
 
         _removeUserStake(userStakes, stakeId);
@@ -364,7 +367,7 @@ contract QueenDecks is Ownable, ReentrancyGuard {
             3600;
         require(now >= allowedTime, "QDeck:reward withdrawal not yet allowed");
 
-        uint256 reward = _rewardDue(stake, now);
+        (, uint256 reward) = _amountDueOn(stake, now);
         if (reward == 0) return;
 
         stakes[msg.sender].data[stakeId].lastRewardTime = safe32(now);
@@ -374,12 +377,13 @@ contract QueenDecks is Ownable, ReentrancyGuard {
         emit Reward(msg.sender, stakeId, reward);
     }
 
-    function _rewardDue(Stake memory stake, uint256 timestamp)
+    function _amountDueOn (Stake memory stake, uint256 timestamp)
         internal
-        view
-        returns (uint256 reward)
+        pure
+        returns (uint256 totalDue, uint256 rewardAccrued)
     {
-        reward = 0;
+        totalDue = stake.amount;
+        rewardAccrued = 0;
         if (
             (stake.amount != 0) &&
             (timestamp > stake.lastRewardTime) &&
@@ -388,13 +392,13 @@ contract QueenDecks is Ownable, ReentrancyGuard {
             uint256 end = timestamp > stake.unlockTime
                 ? stake.unlockTime
                 : timestamp;
+            uint256 fullyDue = stake.amount.mul(stake.rewardFactor).div(1e6);
 
-            reward = stake
-                .amount
-                .mul(stake.rewardFactor)
+            rewardAccrued = fullyDue
+                .sub(stake.amount)
                 .mul(end.sub(stake.lastRewardTime))
-                .div(uint256(stake.lockHours) * 3600)
-                .div(1e6);
+                .div(uint256(stake.lockHours) * 3600);
+            totalDue = totalDue.add(rewardAccrued);
         }
     }
 

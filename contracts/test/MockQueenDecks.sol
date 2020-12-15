@@ -9,12 +9,12 @@ contract MockQueenDecks is QueenDecks {
 
     constructor(address _treasury) public QueenDecks(_treasury) { }
 
-    function __rewardDue(
+    function __amountDueOn(
         Stake memory stake,
         uint256 timestamp
-    ) external view returns (uint256 reward)
+    ) external pure returns (uint256 totalDue, uint256 rewardIncluded)
     {
-        return _rewardDue(stake, timestamp);
+        return _amountDueOn(stake, timestamp);
     }
 
     function __addArrElements(uint256[] calldata els) external {
