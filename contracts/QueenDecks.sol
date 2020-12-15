@@ -202,6 +202,10 @@ contract QueenDecks is Ownable, ReentrancyGuard {
         return termSheets.length;
     }
 
+    function allTermSheets() external view returns(TermSheet[] memory) {
+        return termSheets;
+    }
+
     function deposit(uint256 termsId, uint256 amount) public nonReentrant {
         TermSheet memory tS = termSheets[_validTermsID(termsId)];
         require(tS.enabled, "deposit: terms disabled");
@@ -381,10 +385,14 @@ contract QueenDecks is Ownable, ReentrancyGuard {
             (timestamp > stake.lastRewardTime) &&
             (stake.lastRewardTime < stake.unlockTime)
         ) {
+            uint256 end = timestamp > stake.unlockTime
+                ? stake.unlockTime
+                : timestamp;
+
             reward = stake
                 .amount
                 .mul(stake.rewardFactor)
-                .mul(timestamp.sub(stake.lastRewardTime))
+                .mul(end.sub(stake.lastRewardTime))
                 .div(uint256(stake.lockHours) * 3600)
                 .div(1e6);
         }
