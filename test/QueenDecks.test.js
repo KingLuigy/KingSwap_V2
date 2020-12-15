@@ -8,16 +8,27 @@ const e18 = '000000000000000000';
 const e18andOne = '000000000000000001';
 
 contract('QueenDecks', (accounts) => {
-  const [ deployer, alice, bob, klara, , anybody ] = accounts;
+  const [ deployer, alice, bob, treasury, , anybody ] = accounts;
 
   before(async () => {
-    this.token0 = await MockERC20.new("token0", "T0", '1000000' + e18)
-    this.token1 = await MockERC20.new("token1", "T0", '1000000' + e18)
-    this.token2 = await MockERC20.new("token2", "T0", '1000000' + e18)
+    this.token0 = await MockERC20.new("token0", "T0", `${1e6}` + e18)
+    await this.token0.transfer(alice, `${0.1e6}` + e18);
 
-    this.decks = await QueenDecks.new(alice);
+    this.token1 = await MockERC20.new("token1", "T1", `${1e6}` + e18)
+    await this.token1.transfer(alice, `${0.1e6}` + e18);
+    await this.token1.transfer(bob, `${0.1e6}` + e18);
+
+    this.token2 = await MockERC20.new("token2", "T2", `${1e6}` + e18)
+    await this.token2.transfer(bob, `${0.1e6}` + e18);
+
+    this.decks = await QueenDecks.new(treasury);
     this.termsheets = getTermSheetsArr(this.token0.address, this.token1.address, this.token2.address);
     await this.decks.addTerms(this.termsheets);
+
+    await this.token0.approve(this.decks.address, `${0.1e6}` + e18, { from: alice });
+    await this.token1.approve(this.decks.address, `${0.1e6}` + e18, { from: alice });
+    await this.token1.approve(this.decks.address, `${0.1e6}` + e18, { from: bob });
+    await this.token2.approve(this.decks.address, `${0.1e6}` + e18, { from: bob });
   });
 
   context('_removeArrayElement internal function', () => {
@@ -138,22 +149,22 @@ contract('QueenDecks', (accounts) => {
       lockHours: '1000',
     });
 
-    it('shall return zero reward for zero amount', async() => {
+    xit('shall return zero reward for zero amount', async() => {
       const stake = getSampleStake();
       stake.amount = '0';
       const reward = await this.decks.__rewardDue(stake, 160002000);
-      assert.equal(await reward.toString(), '0');
+      assert.equal(reward.toString(), '0');
     });
 
-    it('shall return zero reward for for `timestamp <= lastRewardTime`', async() => {
+    xit('shall return zero reward for for `timestamp <= lastRewardTime`', async() => {
       const stake = getSampleStake();
       const reward1 = await this.decks.__rewardDue(stake, 160000000);
       const reward2 = await this.decks.__rewardDue(stake, 159999999);
-      assert.equal(await reward1.toString(), '0');
-      assert.equal(await reward2.toString(), '0');
+      assert.equal(reward1.toString(), '0');
+      assert.equal(reward2.toString(), '0');
     });
 
-    it('shall return zero reward for for `lastRewardTime >= unlockTime`', async() => {
+    xit('shall return zero reward for for `lastRewardTime >= unlockTime`', async() => {
       const stake1 = getSampleStake();
       stake1.lastRewardTime = '160001000'
       const stake2 = getSampleStake();
@@ -161,48 +172,48 @@ contract('QueenDecks', (accounts) => {
 
       const reward1 = await this.decks.__rewardDue(stake1, 160005000);
       const reward2 = await this.decks.__rewardDue(stake2, 160005000);
-      assert.equal(await reward1.toString(), '0');
-      assert.equal(await reward2.toString(), '0');
+      assert.equal(reward1.toString(), '0');
+      assert.equal(reward2.toString(), '0');
     });
 
-    it('shall return expected reward #1', async() => {
+    xit('shall return expected reward #1', async() => {
       const stake = getSampleStake();
       const reward = await this.decks.__rewardDue(stake, 160002000);
       assert.equal(
-          await reward.toString(),
+          reward.toString(),
           parseInt(`${1e18 / (1000 * 3600) * (160001000 - 160000000)  * 1.1}`).toString(),
       );
     });
 
-    it('shall return expected reward #2', async() => {
+    xit('shall return expected reward #2', async() => {
       const stake = getSampleStake();
       const reward = await this.decks.__rewardDue(stake, 160001000);
       assert.equal(
-          await reward.toString(),
+          reward.toString(),
           parseInt(`${1e18 / (1000 * 3600) * (160001000 - 160000000)  * 1.1}`).toString(),
       );
     });
 
-    it('shall return expected reward #3', async() => {
+    xit('shall return expected reward #3', async() => {
       const stake = getSampleStake();
       const reward = await this.decks.__rewardDue(stake, 160005000);
       assert.equal(
-          await reward.toString(),
+          reward.toString(),
           parseInt(`${1e18 / (1000 * 3600) * (160001000 - 160000000)  * 1.1}`).toString(),
       );
     });
 
-    it('shall return expected reward #4', async() => {
+    xit('shall return expected reward #4', async() => {
       const stake = getSampleStake();
       const reward = await this.decks.__rewardDue(stake, 160000500);
       assert.equal(
-          await reward.toString(),
+          reward.toString(),
           parseInt(`${1e18 / (1000 * 3600) * (160000500 - 160000000)  * 1.1}`).toString(),
       );
     });
   });
 
-    context('termsheet functions', () => {
+  context('termsheet functions', () => {
 
     context('termsLength()', () => {
       xit('shall return number of termsheets', async() => {
@@ -237,6 +248,52 @@ contract('QueenDecks', (accounts) => {
         assert.equal((await this.decks.termsLength()).toString(), '5');
         await this.decks.addTerms([ newSheet ]);
         assert.equal((await this.decks.termsLength()).toString(), '6');
+      });
+    });
+  });
+
+  context('deposit() function', () => {
+    it('shall allow open a deposit', async () => {
+      await this.decks.deposit(1, '30' + e18, { from: bob });
+    });
+
+    context('opening a deposit', () => {
+      before(async () => {
+        assert.equal((await this.token0.balanceOf(alice)).toString(), '100000' + e18);
+        assert.equal((await this.token0.balanceOf(treasury)).toString(), '0');
+
+        this.depositTx = await this.decks.deposit(4, '20' + e18, { from: alice });
+        this.stakeId = this.depositTx.logs[0].args.stakeId;
+        this.depositTime = (await web3.eth.getBlock('latest')).timestamp;
+      });
+
+      it('shall transfer deposited token from user account', async () => {
+        assert.equal((await this.token0.balanceOf(alice)).toString(), '99980' + e18);
+      });
+
+      it('shall transfer deposited token to treasury account', async () => {
+        assert.equal((await this.token0.balanceOf(treasury)).toString(), '20' + e18);
+      });
+
+      it('shall emit Deposit event with valid params', async () => {
+        assert.equal(this.depositTx.logs[0].event, 'Deposit');
+        assert.equal(this.depositTx.logs[0].args.token.toLowerCase(), this.token0.address.toLowerCase());
+        assert.equal(this.depositTx.logs[0].args.user.toLowerCase(), alice.toLowerCase());
+        assert.equal(this.depositTx.logs[0].args.amount.toString(), '20' + e18);
+        assert.equal(this.depositTx.logs[0].args.amountDue.toString(), `${20 * 1.1}` + e18);
+        assert.equal(this.depositTx.logs[0].args.unlockTime.toString(), `${24 * 30 * 3600 + this.depositTime}`);
+      });
+
+      it('shall add the deposit to stakes', async () => {
+        const stake = await this.decks.stakeData(alice, this.stakeId);
+        // amount
+        assert.equal(stake[0].toString(), '20' + e18);
+        // unlockTime
+        assert.equal(stake[1].toString(), `${24 * 30 * 3600 + this.depositTime}`);
+        // lastRewardTime
+        assert.equal(stake[2].toString(), `${this.depositTime}`);
+        // rewardLockHours
+        assert.equal(stake[3].toString(), `${1.1e6}`);
       });
     });
   });
@@ -284,9 +341,9 @@ function getTermSheetsArr(token0, token1, token2) {
       minAmount: '14' + e18,
       maxAmountFactor: `${5e4}`,
       rewardFactor: '1100000',
-      lockHours: 24,
+      lockHours: 24 * 30,
       rewardLockHours: 1,
-      token: token2,
+      token: token0,
       enabled: true,
     }
   ];

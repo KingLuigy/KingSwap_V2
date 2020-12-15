@@ -214,7 +214,7 @@ contract QueenDecks is Ownable, ReentrancyGuard {
         if (tS.maxAmountFactor != 0) {
             require(
                 amount <=
-                    uint256(tS.minAmount).sub(tS.maxAmountFactor).div(1e4),
+                    uint256(tS.minAmount).mul(tS.maxAmountFactor).div(1e4),
                 "deposit: too big amount"
             );
         }
@@ -223,7 +223,7 @@ contract QueenDecks is Ownable, ReentrancyGuard {
         require(stakeNum != 0, "QDeck:stakeQty_OVERFLOW");
 
         uint256 amountDue = amount.mul(tS.rewardFactor).div(1e6);
-        uint32 unlockTime = safe32(now + tS.lockHours * 3600);
+        uint32 unlockTime = safe32(now.add(uint256(tS.lockHours) * 3600));
 
         uint256 stakeId = _encodeStakeId(tS.token, stakeNum, now, tS.lockHours);
 
