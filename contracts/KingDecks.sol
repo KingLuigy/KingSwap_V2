@@ -12,10 +12,10 @@ import "../../KingSwap_Private/contracts/kingswap/interfaces/IERC20.sol";
 /**
  * It accepts deposits of a pre-defined ERC-20 token(s), the "deposit" token.
  * The deposit token will be repaid with another ERC-20 token, the "repay"
- * token (e.g. a stable-coin) at a pre-defined rate.
+ * token (e.g. a stable-coin), at a pre-defined rate.
  *
  * On top of the deposit token, a particular NFT (ERC-721) may be required to
- * be deposited as well. In this case, this exact NFT instance will be returned.
+ * be deposited as well. In this case, this exact NFT instance to be returned.
  *
  * Note the `treasury` account that borrows and repays tokens.
  */
@@ -47,8 +47,8 @@ contract KingDecks is Ownable, ReentrancyGuard {
 
     // Extra tokens (addition to the hard-coded tokens list)
     Token[] private extraTokens;
-    // ID of extraTokens[0]
-    uint256 extraTokensStartId = 32;
+    // Index of extraTokens[0] in the `extraTokens` array + 1
+    uint256 extraTokensStartId = 33;
 
     function getTokenData(
         uint256 tokenId
@@ -61,7 +61,7 @@ contract KingDecks is Ownable, ReentrancyGuard {
         TokenType[] types
     ) external onlyOwner {
         require(
-            addresses.length + extraTokens.length + extraTokensStartId < 256,
+            addresses.length + extraTokens.length + extraTokensStartId <= 256,
             "too many tokens to add"
         );
         for (uint256 i = 0; i < addresses.length; i++) {
@@ -113,16 +113,8 @@ contract KingDecks is Ownable, ReentrancyGuard {
     }
 
     struct TermSheet {
-        // Rate to compute the "repay" amount, scaled by 1e+6 (see (1))
-        uint32 rate;
-        // ID (index in `_depositLimits` + 1) of deposit amount limits
-        // (no limitation, if 0)
-        uint16 limitsId;
-        // Deposit period in hours
-        uint16 lockHours;
-        // Min time between interim partial withdrawals
-        // (set to 0 to disallow interim withdrawals)
-        uint16 minInterimHours;
+        // If depositing under this term sheet are enabled
+        bool enabled;
         // ID of the ERC-20 token to deposit
         uint8 depositTokenId;
         // ID of the ERC-20 token to return (instead of the deposited token)
@@ -130,11 +122,23 @@ contract KingDecks is Ownable, ReentrancyGuard {
         // ID of the ERC-721 token (contract) to deposit
         // (no ERC-721 token required, if set to 0)
         uint8 nftTokenId;
+        // Fees on early withdrawal, in 1/256 shares of the amount withdrawn
+        uint8 earlyWithdrawFees;
+        // Amount allowed to withdraw early, in 1/256 shares of "repay" amount
+        uint8 earlyWithdrawMaxAmount;
+        // ID (index in `_depositLimits` + 1) of deposit amount limits
+        // (no limitation, if 0)
+        uint16 limitsId;
+        // Deposit period in hours
+        uint16 lockHours;
+        // Min time between interim (early) withdrawals
+        // (set to 0 to disallow interim withdrawals)
+        uint16 minInterimHours;
+        // Rate to compute the "repay" amount, scaled by 1e+6 (see (1))
+        uint32 rate;
         // Bit-mask for NFT numbers allowed to deposit
         // (no limitations on NFT numbers, if set to 0)
         uint64 allowedNftNumBitMask;
-        // If depositing under this term sheet are enabled
-        bool enabled;
     }
 
     struct Deposit {
@@ -521,15 +525,7 @@ contract KingDecks is Ownable, ReentrancyGuard {
         // Risk of termsId (16 bits) overflow ignored
         _termSheets.push(tS);
 
-        emit NewTermSheet(
-            _termSheets.length,
-            tS.token,
-            tS.minAmount,
-            tS.maxAmountFactor,
-            tS.lockHours,
-            tS.minInterimHours,
-            tS.rate
-        );
+        emit NewTermSheet(_termSheets.length);
         if (tS.enabled) emit TermsEnabled(_termSheets.length);
     }
 
