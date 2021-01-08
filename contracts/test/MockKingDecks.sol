@@ -15,7 +15,11 @@ contract MockKingDecks is KingDecks {
         Deposit memory d,
         TermSheet memory tS,
         uint256 timeNow
-    ) external pure returns (uint256 amountToUser, uint256 fees) {
+    ) external pure returns (
+        uint256 amountToUser,
+        uint256 fees,
+        uint256 newlockedShare
+    ) {
         return _computeEarlyWithdrawal(d, tS, timeNow);
     }
 
