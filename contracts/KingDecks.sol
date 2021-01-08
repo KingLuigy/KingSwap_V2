@@ -23,7 +23,7 @@ contract KingDecks is Ownable, ReentrancyGuard, TokenList {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
-    struct DepositLimits {
+    struct Limit {
         // Min token amount to deposit
         uint224 minAmount;
         // Max deposit amount multiplier, scaled by 1e+4
@@ -43,11 +43,11 @@ contract KingDecks is Ownable, ReentrancyGuard, TokenList {
         // ID of the ERC-20 token to return instead of the deposited token
         uint8 outTokenId;
         // Maximum amount that may be withdrawn before the deposit period ends,
-        // in 1/256 shares of the deposit amount
+        // in 1/255 shares of the deposit amount
         // (it linearly increases with time from zero on depositing up to this
         // value by the deposit period end)
         uint8 earlyWithdrawShare;
-        // Fees on early withdrawal, in 1/256 shares of the amount withdrawn
+        // Fees on early withdrawal, in 1/255 shares of the amount withdrawn
         // (fees linearly decline to zero towards the repayment time)
         uint8 earlyWithdrawFees;
         // ID (index in `_limits` array + 1) of the deposit amount limit
@@ -93,7 +93,7 @@ contract KingDecks is Ownable, ReentrancyGuard, TokenList {
     address public treasury;
 
     // Limits on "deposit" token amount
-    DepositLimits[] private _limits;
+    Limit[] private _limits;
 
     // Info on each TermSheet
     TermSheet[] internal _termSheets;
@@ -192,7 +192,7 @@ contract KingDecks is Ownable, ReentrancyGuard, TokenList {
 
     function depositLimits(
         uint256 limitId
-    ) external view returns (DepositLimits memory) {
+    ) external view returns (Limit memory) {
         return _limits[_validLimitID(limitId) - 1];
     }
 
@@ -200,7 +200,7 @@ contract KingDecks is Ownable, ReentrancyGuard, TokenList {
         return _limits.length;
     }
 
-    function allDepositLimits() external view returns(DepositLimits[] memory)
+    function allDepositLimits() external view returns(Limit[] memory)
     {
         return _limits;
     }
@@ -231,7 +231,7 @@ contract KingDecks is Ownable, ReentrancyGuard, TokenList {
         require(tS.enabled, "KDecks:terms disabled or unknown");
 
         if (tS.limitId != 0) {
-            DepositLimits memory l = _limits[tS.limitId - 1];
+            Limit memory l = _limits[tS.limitId - 1];
             require(amount >= l.minAmount, "KDecks:too small deposit amount");
             if (l.maxAmountFactor != 0) {
                 require(
@@ -254,7 +254,7 @@ contract KingDecks is Ownable, ReentrancyGuard, TokenList {
 
         uint256 amountDue = amount.mul(tS.rate).div(1e6);
         require(amountDue < 2**160, "KDecks:O2");
-        uint32 repaymentTime = safe32(now.add(uint256(tS.depositHours) * 3600));
+        uint32 repaymentTime = safe32(now.add(uint256(tS.depositHours) *3600));
 
         if (tS.nfTokenId == 0) {
             require(nftId == 0, "KDecks:unexpected non-zero nftId");
@@ -322,7 +322,7 @@ contract KingDecks is Ownable, ReentrancyGuard, TokenList {
         emit TermsDisabled(termsId);
     }
 
-    function addLimits(DepositLimits[] memory limits) public onlyOwner {
+    function addLimits(Limit[] memory limits) public onlyOwner {
         for (uint256 i = 0; i < limits.length; i++) {
             _addLimit(limits[i]);
         }
@@ -378,9 +378,10 @@ contract KingDecks is Ownable, ReentrancyGuard, TokenList {
         ( , uint8 outTokenId, uint8 nfTokenId, ) = decodeDepositId(depositId);
         if (isInterim) {
             TermSheet memory tS = _termSheets[_deposit.termsId - 1];
+            uint256 allowedTime = uint256(_deposit.lastWithdrawTime) +
+                tS.minInterimHours * 3600;
             require(
-                tS.minInterimHours != 0 &&
-                    now >= _deposit.lastWithdrawTime + tS.minInterimHours * 3600,
+                tS.minInterimHours != 0 && now >= allowedTime,
                 "KDecks:withdrawal not yet allowed"
             );
 
@@ -409,9 +410,12 @@ contract KingDecks is Ownable, ReentrancyGuard, TokenList {
         _deposit.amountDue = uint160(amountDue);
         userDeposits.data[depositId] = _deposit;
 
-        amountsDue[outTokenId] = amountsDue[outTokenId].sub(amountToUser).sub(fees);
+        amountsDue[outTokenId] = amountsDue[outTokenId]
+            .sub(amountToUser)
+            .sub(fees);
 
-        IERC20(outTokenId).safeTransferFrom(treasury, msg.sender, amountToUser);
+        IERC20(outTokenId)
+            .safeTransferFrom(treasury, msg.sender, amountToUser);
     }
 
     function _computeEarlyWithdrawal(
@@ -419,30 +423,31 @@ contract KingDecks is Ownable, ReentrancyGuard, TokenList {
         TermSheet memory tS,
         uint256 timeNow
     ) internal pure returns (uint256 amountToUser, uint256 fees) {
-        amountToUser = d.amountDue;
+        amountToUser = 0;
         fees = 0;
 
         if (timeNow < d.repaymentTime) {
             // note, values are too small to overflow; otherwise, safemath used
-            uint256 term = tS.depositHours * 3600; // can't be zero
+            uint256 term = uint256(tS.depositHours) * 3600; // can't be zero
             uint256 timeLeft = d.repaymentTime - timeNow;
 
             {
                 uint256 amountDue = uint256(d.amountDue);
                 uint256 prevTimeLeft = d.repaymentTime - d.lastWithdrawTime;
-                uint256 reversedShare = 256 - tS.earlyWithdrawShare; // x256
-                uint256 weightedTerm = tS.earlyWithdrawShare * term;
+                uint256 directShare = tS.earlyWithdrawShare; // scaled x255
+                uint256 reversedShare = 255 - directShare;
+                uint256 weightedTerm = reversedShare * term;
 
                 // Debt linearly declines according to `tS.earlyWithdrawShare`
                 uint256 newAmountDue = amountDue
-                    .mul(weightedTerm + reversedShare * timeLeft)
-                    .div(weightedTerm + reversedShare * prevTimeLeft);
+                    .mul(weightedTerm + directShare * timeLeft)
+                    .div(weightedTerm + directShare * prevTimeLeft);
                 amountToUser = amountDue.sub(newAmountDue);
             }
 
             fees = amountToUser
                 .mul(uint256(tS.earlyWithdrawFees))
-                .div(256)               // `earlyWithdrawFees` scaled down
+                .div(255)               // `earlyWithdrawFees` scaled down
                 .mul(timeLeft) / term;  // the rate linearly drops to zero
 
             amountToUser = amountToUser.sub(fees); // fees withheld
@@ -472,7 +477,7 @@ contract KingDecks is Ownable, ReentrancyGuard, TokenList {
         if (tS.enabled) emit TermsEnabled(_termSheets.length);
     }
 
-    function _addLimit(DepositLimits memory l) internal {
+    function _addLimit(Limit memory l) internal {
         require(l.minAmount != 0, "KDecks:INVALID_minAmount");
         _limits.push(l);
     }
