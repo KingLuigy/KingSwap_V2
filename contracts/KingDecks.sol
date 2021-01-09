@@ -176,7 +176,7 @@ contract KingDecks is Ownable, ReentrancyGuard, TokenList {
         return _termSheets.length;
     }
 
-    function depositLimits(
+    function depositLimit(
         uint256 limitId
     ) external view returns (Limit memory) {
         return _limits[_validLimitID(limitId) - 1];

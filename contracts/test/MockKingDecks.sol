@@ -30,6 +30,27 @@ contract MockKingDecks is KingDecks {
         return _isAllowedNftId(nftId, allowedBitMask);
     }
 
+    function __encodeDepositId(
+        uint256 serialNum,
+        uint256 termsId,
+        uint256 outTokenId,
+        uint256 nfTokenId,
+        uint256 nftId
+    ) external pure returns(uint256) {
+        return _encodeDepositId(serialNum, termsId, outTokenId, nfTokenId, nftId);
+    }
+
+    function __decodeDepositId(uint256 depositId) external pure
+    returns (
+        uint16 termsId,
+        uint8 outTokenId,
+        uint8 nfTokenId,
+        uint16 nftId
+    ) {
+        return _decodeDepositId(depositId);
+    }
+
+
     function __addArrElements(uint256[] calldata els) external {
         for (uint256 i = 0; i < els.length; i++) {
             __mockArr.push(els[i]);

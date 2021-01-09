@@ -1,5 +1,5 @@
 /* global artifacts, asert, before, beforeEach, context, contract */
-const { expectRevert, time } = require('@openzeppelin/test-helpers');
+const { expectEvent, expectRevert, time } = require('@openzeppelin/test-helpers');
 
 const KingDecks = artifacts.require('MockKingDecks');
 const MockERC20 = artifacts.require('MockERC20');
@@ -11,7 +11,47 @@ contract('KingDecks', (accounts) => {
   const e18 = '000000000000000000';
   const e15 = '000000000000000';
   const e18andOne = '000000000000000001';
-  const [ deployer, treasurer, alice, bob, klara, , anybody ] = accounts;
+  const [ deployer, treasury, alice, bob, klara, , anybody ] = accounts;
+
+  const limits = [
+    { // 0: id = 1
+      minAmount: '10'+e18,
+      maxAmountFactor: '0' // max amount unlimited
+    },
+    { // 1: id = 2
+      minAmount: '10'+e18,
+      maxAmountFactor: '50'+'0000' // scaled by 1e4
+    },
+    { // 2: id = 3
+      minAmount: '1',
+      maxAmountFactor: '2'+'0000' // scaled by 1e4
+    },
+    { // 3: id = 4
+      minAmount: `${1e6}`+e18,
+      maxAmountFactor: '1000'+'0000'
+    },
+  ];
+
+  const getSampleTermSheet = (params = {}) => Object.assign({
+    availableQty: 255,
+    inTokenId: 33,
+    nfTokenId: 34,
+    outTokenId: 35,
+    earlyRepayableShare: 192,
+    earlyWithdrawFees: 64,
+    limitId: 2,
+    depositHours: 1000,
+    minInterimHours: 1,
+    rate: 3e5, // scaled by 1e6
+    allowedNftNumBitMask: parseInt('1010001',2),
+  }, params);
+
+  const getSampleDeposit = (maturityTime = 1000 * 3600 + 100, lastWithdrawTime = 100) => ({
+    amountDue: '100'+e18,
+    maturityTime,
+    lastWithdrawTime,
+    lockedShare: 192*(2**16 - 1)/255
+  });
 
   context('_removeArrayElement internal function', () => {
     const els = [
@@ -121,47 +161,6 @@ contract('KingDecks', (accounts) => {
     });
   });
 
-  const limits = [
-    { // 0: id = 1
-      minAmount: '10'+e18,
-      maxAmountFactor: '0' // max amount unlimited
-    },
-    { // 1: id = 2
-      minAmount: '10'+e18,
-      maxAmountFactor: '50'+'0000' // scaled by 1e4
-    },
-    { // 2: id = 3
-      minAmount: '1',
-      maxAmountFactor: '2'+'0000' // scaled by 1e4
-    },
-    { // 3: id = 4
-      minAmount: `${1e6}`+e18,
-      maxAmountFactor: '1000'+'0000'
-    },
-  ];
-
-  const getSampleTermSheet = () => ({
-    availableQty: 255,
-    inTokenId: 33,
-    nfTokenId: 34,
-    outTokenId: 35,
-    earlyRepayableShare: 192,
-    earlyWithdrawFees: 64,
-    limitId: 2,
-    depositHours: 1000,
-    minInterimHours: 1,
-    rate: 3e5, // scaled by 1e6
-    allowedNftNumBitMask: parseInt('1010001',2),
-  });
-
-  const getSampleDeposit = (maturityTime = 1000 * 3600 + 100, lastWithdrawTime = 100) => ({
-    amountDue: '100'+e18,
-    maturityTime,
-    lastWithdrawTime,
-    lockedShare: 192*(2**16 - 1)/255
-  });
-
-
   context('__computeEarlyWithdrawal internal function', () => {
     before(async () => {
       this.decks = await KingDecks.new(anybody);
@@ -170,7 +169,7 @@ contract('KingDecks', (accounts) => {
     });
 
     it('Should return zeros for t == lastWithdrawTime', async () => {
-      const { amountToUser, fees, newlockedShare } = await this.decks.__computeEarlyWithdrawal(
+      const { amountToUser, fees } = await this.decks.__computeEarlyWithdrawal(
           this.sampleDeposit, this.sampleTermSheet, this.sampleDeposit.lastWithdrawTime.toString()
       );
       assert.equal(amountToUser.toString(), '0');
@@ -178,7 +177,7 @@ contract('KingDecks', (accounts) => {
     });
 
     it('Should return zeros for t == maturityTime', async () => {
-      const { amountToUser, fees, newlockedShare } = await this.decks.__computeEarlyWithdrawal(
+      const { amountToUser, fees } = await this.decks.__computeEarlyWithdrawal(
           this.sampleDeposit, this.sampleTermSheet, this.sampleDeposit.maturityTime.toString()
       );
       assert.equal(amountToUser.toString(), '0');
@@ -186,7 +185,7 @@ contract('KingDecks', (accounts) => {
     });
 
     it('Should return zeros for t > maturityTime', async () => {
-      const { amountToUser, fees, newlockedShare } = await this.decks.__computeEarlyWithdrawal(
+      const { amountToUser, fees } = await this.decks.__computeEarlyWithdrawal(
           this.sampleDeposit, this.sampleTermSheet, (this.sampleDeposit.maturityTime + 1).toString()
       );
       assert.equal(amountToUser.toString(), '0');
@@ -194,7 +193,7 @@ contract('KingDecks', (accounts) => {
     });
 
     it('Should return non-zero values for lastWithdrawTime < t < maturityTime', async () => {
-      const { amountToUser, fees, newlockedShare } = await this.decks.__computeEarlyWithdrawal(
+      const { amountToUser, fees } = await this.decks.__computeEarlyWithdrawal(
           this.sampleDeposit, this.sampleTermSheet, (this.sampleDeposit.maturityTime - 1).toString()
       );
       assert.equal(amountToUser.gt(toBN(0)), true);
@@ -412,6 +411,185 @@ contract('KingDecks', (accounts) => {
         // non-repayable-early amount: 0%
         assert.equal(newlockedShare.toString(), '65535');
       });
+    });
+  });
+
+  context('TODO: create tests from "bulk test" bellow (#1)', () => {
+    before(async () => {
+      this.decks = await KingDecks.new(treasury);
+
+      this.token0 = await MockERC20.new("token0", "T0", `${1e6}` + e18)
+      await this.token0.transfer(treasury, `${0.1e6}` + e18);
+      await this.token0.transfer(alice, `${0.1e6}` + e18);
+      await this.token0.transfer(bob, `${0.1e6}` + e18);
+
+      this.token1 = await MockERC20.new("token1", "T1", `${1e6}` + e18)
+      await this.token1.transfer(treasury, `${0.1e6}` + e18);
+      await this.token1.transfer(alice, `${0.1e6}` + e18);
+      await this.token1.transfer(bob, `${0.1e6}` + e18);
+
+      this.token2 = await MockERC20.new("token2", "T2", `${1e6}` + e18)
+      await this.token2.transfer(treasury, `${0.1e6}` + e18);
+      await this.token2.transfer(bob, `${0.1e6}` + e18);
+
+      await this.token0.approve(this.decks.address, `${0.1e6}` + e18, { from: alice });
+      await this.token0.approve(this.decks.address, `${0.1e6}` + e18, { from: bob });
+      await this.token0.approve(this.decks.address, `${0.2e6}` + e18, { from: treasury });
+
+      await this.token1.approve(this.decks.address, `${0.1e6}` + e18, { from: alice });
+      await this.token1.approve(this.decks.address, `${0.1e6}` + e18, { from: bob });
+      await this.token1.approve(this.decks.address, `${0.2e6}` + e18, { from: treasury });
+
+      await this.token2.approve(this.decks.address, `${0.1e6}` + e18, { from: bob });
+      await this.token2.approve(this.decks.address, `${0.2e6}` + e18, { from: treasury });
+
+      this.nft = await MockERC721.new("Mock NFT", "NFT", deployer, 16)
+      await this.nft.safeTransferFrom(deployer, alice, 1, '0x0')
+      await this.nft.safeTransferFrom(deployer, bob, 7, '0x0')
+      await this.nft.safeTransferFrom(deployer, bob, 11, '0x0')
+      await this.nft.safeTransferFrom(deployer, bob, 12, '0x0')
+
+      this.sampleDeposit = getSampleDeposit();
+      this.sampleTermSheet = getSampleTermSheet();
+    });
+
+    before(async () => {
+      await this.decks.addLimits(limits);
+      await this.decks.addTokens(
+          // ID = 33,            ID = 34,          ID = 35,             ID = 36
+          [ this.token0.address, this.nft.address, this.token1.address, this.token2.address ],
+          [ 1 /* Erc20 */,       2 /* Erc721 */,   1 /* Erc20 */,       1 /* Erc20 */ ]
+      );
+      await this.decks.addTerms([
+        /*ID=1*/ getSampleTermSheet({ inTokenId: 33, outTokenId: 35, nfTokenId: 34, depositHours: 1, limitId: 1, rate: 1e4}),
+        /*ID=2*/ getSampleTermSheet({ inTokenId: 33, outTokenId: 36, nfTokenId: 0, depositHours: 1, limitId: 2, rate: 2e6 }),
+      ]);
+    });
+
+    it('Should register limits with the contract', async () => {
+      assert.equal((await this.decks.depositLimitsNum()).toString(), `${limits.length}`);
+      assert.equal(
+          (await this.decks.depositLimit(2)).maxAmountFactor.toString(),
+          limits[1].maxAmountFactor
+      );
+    });
+
+    it('Should know mainnet addresses of $KING and DAI tokens', async () => {
+      assert.equal(
+          (await this.decks.getTokenData(1))[0].toLowerCase(),
+          ('0x5a731151d6510Eb475cc7a0072200cFfC9a3bFe5').toLowerCase()
+      );
+      assert.equal(
+          (await this.decks.getTokenData(4))[0].toLowerCase(),
+          ('0x6B175474E89094C44Da98b954EedeAC495271d0F').toLowerCase()
+      );
+    });
+
+    it('Should register tokens with the contract', async () => {
+      assert.equal((await this.decks.getTokenData(33))[0].toLowerCase(), this.token0.address.toLowerCase());
+      assert.equal((await this.decks.getTokenData(34))[0].toLowerCase(), this.nft.address.toLowerCase());
+      assert.equal((await this.decks.getTokenData(35))[0].toLowerCase(), this.token1.address.toLowerCase());
+      assert.equal((await this.decks.getTokenData(36))[0].toLowerCase(), this.token2.address.toLowerCase());
+    });
+
+    it('Should register term sheets with the contract', async () => {
+      assert.equal((await this.decks.termSheetsNum()).toString(), '2');
+      assert.equal((await this.decks.termSheet(2)).outTokenId.toString(), '36');
+    });
+
+    it('Should accept a deposit under the TermSheet #2', async () => {
+      const balances = {
+        beforeContractInToken: await this.token0.balanceOf(this.decks.address),
+        beforeAliceInToken: await this.token0.balanceOf(alice),
+        beforeTreasuryInToken: await this.token0.balanceOf(treasury),
+      };
+
+      const r = await this.decks.deposit(2, '10'+e18, 0, {from: alice});
+      const timeNow = (await web3.eth.getBlock('latest')).timestamp;
+
+      balances.afterContractInToken = await this.token0.balanceOf(this.decks.address);
+      balances.afterAliceInToken =  await this.token0.balanceOf(alice);
+      balances.afterTreasuryInToken = await this.token0.balanceOf(treasury);
+      const log = expectEvent(r, 'NewDeposit');
+      const depositId = log.args.depositId.toString();
+
+      assert.equal(log.args.user.toLowerCase(), alice.toLowerCase());
+      assert.equal(log.args.inTokenId.toString(), '33');
+      assert.equal(log.args.outTokenId.toString(), '36');
+      assert.equal(log.args.termsId.toString(), '2');
+      assert.equal(log.args.amount.toString(), '10'+e18);
+      assert.equal(log.args.amountDue.toString(), '20'+e18);
+      assert.equal(log.args.maturityTime.toString(), `${3600 + timeNow}`);
+
+      const deposit = await this.decks.depositData(alice, depositId);
+      assert.equal(deposit.amountDue.toString(), log.args.amountDue.toString());
+      assert.equal(deposit.maturityTime.toString(), log.args.maturityTime.toString());
+      assert.equal(deposit.lastWithdrawTime.toString(), `${timeNow}`);
+
+      assert.equal((await this.decks.totalDue('36')).toString(), '20'+e18);
+
+      assert.equal(
+          balances.beforeContractInToken.sub(balances.afterContractInToken).toString(),
+          '0'
+      );
+      assert.equal(
+          balances.beforeAliceInToken.sub(balances.afterAliceInToken).toString(),
+          '10'+e18
+      );
+      assert.equal(
+          balances.afterTreasuryInToken.sub(balances.beforeTreasuryInToken).toString(),
+          '10'+e18
+      );
+    });
+
+    it('Should accept a deposit under the TermSheet #1', async () => {
+      const balances = {
+        beforeContractInToken: await this.token0.balanceOf(this.decks.address),
+        beforeContractNFT: await this.nft.balanceOf(this.decks.address),
+        beforeBobInToken: await this.token0.balanceOf(bob),
+        beforeTreasuryInToken: await this.token0.balanceOf(treasury),
+      };
+
+      await this.nft.approve(this.decks.address, '7', { from: bob })
+      const r = await this.decks.deposit(1, '100'+e18, 7, {from: bob});
+      const timeNow = (await web3.eth.getBlock('latest')).timestamp;
+
+      balances.afterContractInToken = await this.token0.balanceOf(this.decks.address);
+      balances.afterContractNFT = await this.nft.balanceOf(this.decks.address);
+      balances.afterBobInToken =  await this.token0.balanceOf(bob);
+      balances.afterTreasuryInToken = await this.token0.balanceOf(treasury);
+      const log = expectEvent(r, 'NewDeposit');
+      const depositId = log.args.depositId.toString();
+
+      assert.equal(log.args.user.toLowerCase(), bob.toLowerCase());
+      assert.equal(log.args.inTokenId.toString(), '33');
+      assert.equal(log.args.outTokenId.toString(), '35');
+      assert.equal(log.args.termsId.toString(), '1');
+      assert.equal(log.args.amount.toString(), '100'+e18);
+      assert.equal(log.args.amountDue.toString(), '1'+e18);
+      assert.equal(log.args.maturityTime.toString(), `${3600 + timeNow}`);
+
+      const deposit = await this.decks.depositData(bob, depositId);
+      assert.equal(deposit.amountDue.toString(), log.args.amountDue.toString());
+      assert.equal(deposit.maturityTime.toString(), log.args.maturityTime.toString());
+      assert.equal(deposit.lastWithdrawTime.toString(), `${timeNow}`);
+
+      assert.equal((await this.decks.totalDue('35')).toString(), '1'+e18);
+
+      assert.equal(
+          balances.beforeContractInToken.sub(balances.afterContractInToken).toString(),
+          '0'
+      );
+      assert.equal(
+          balances.beforeBobInToken.sub(balances.afterBobInToken).toString(),
+          '100'+e18
+      );
+      assert.equal(
+          balances.afterTreasuryInToken.sub(balances.beforeTreasuryInToken).toString(),
+          '100'+e18
+      );
+      assert.equal(balances.beforeContractNFT.toString(), '0');
+      assert.equal(balances.afterContractNFT.toString(), '1');
     });
   });
 });
