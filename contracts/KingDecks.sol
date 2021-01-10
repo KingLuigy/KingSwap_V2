@@ -448,7 +448,7 @@ contract KingDecks is Ownable, ReentrancyGuard, TokenList {
             .sub(amountToUser)
             .sub(fees);
 
-        IERC20(outTokenId)
+        IERC20(_tokenAddr(outTokenId))
             .safeTransferFrom(treasury, msg.sender, amountToUser);
     }
 
