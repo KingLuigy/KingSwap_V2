@@ -71,7 +71,7 @@ contract KingDecks is Ownable, ReentrancyGuard, TokenList {
         // Deposit period in hours
         uint16 depositHours;
         // Min time between interim (early) withdrawals
-        // (if set to 0, interim withdrawals disallowed)
+        // (if set to 0, no limits on interim withdrawal time)
         uint16 minInterimHours;
         // Rate to compute the "repay" amount, scaled by 1e+6 (see (1))
         uint64 rate;
@@ -162,8 +162,12 @@ contract KingDecks is Ownable, ReentrancyGuard, TokenList {
     function depositData(
         address user,
         uint256 depositId
-    ) external view returns (Deposit memory) {
-        return _deposits[_nonZeroAddr(user)].data[depositId];
+    ) external view returns(uint256 termsId, Deposit memory params) {
+        params = _deposits[_nonZeroAddr(user)].data[depositId];
+        termsId = 0;
+        if (params.maturityTime !=0) {
+            (termsId, , , ) = _decodeDepositId(depositId);
+        }
     }
 
     function termSheet(
@@ -174,6 +178,10 @@ contract KingDecks is Ownable, ReentrancyGuard, TokenList {
 
     function termSheetsNum() external view returns (uint256) {
         return _termSheets.length;
+    }
+
+    function allTermSheets() external view returns(TermSheet[] memory) {
+        return _termSheets;
     }
 
     function depositLimit(
@@ -190,6 +198,29 @@ contract KingDecks is Ownable, ReentrancyGuard, TokenList {
         uint256 tokenId
     ) external view returns(address, TokenType) {
         return _token(uint8(tokenId));
+    }
+
+    function isAcceptableNft(
+        uint256 termsId,
+        address nftContract,
+        uint256 nftId
+    ) external view returns(bool) {
+        TermSheet memory tS = _termSheets[_validTermsID(termsId) - 1];
+        if (tS.nfTokenId != 0 && _tokenAddr(tS.nfTokenId) == nftContract) {
+            return _isAllowedNftId(nftId, tS.allowedNftNumBitMask);
+        }
+        return false;
+    }
+
+    function idsToBitmask(
+        uint256[] memory ids
+    ) pure external returns(uint256 bitmask) {
+        bitmask = 0;
+        for (uint256 i = 0; i < ids.length; i++) {
+            uint256 id = ids[i];
+            require(id != 0 && id <= 64, "KDecks:unsupported NFT ID");
+            bitmask = bitmask | (id == 1 ? 1 : 2 << (id - 2));
+        }
     }
 
     function computeEarlyWithdrawal(
@@ -406,10 +437,8 @@ contract KingDecks is Ownable, ReentrancyGuard, TokenList {
 
         if (isInterim) {
             TermSheet memory tS = _termSheets[termsId - 1];
-            uint256 allowedTime = uint256(_deposit.lastWithdrawTime) +
-                tS.minInterimHours * 3600;
             require(
-                tS.minInterimHours != 0 && now >= allowedTime,
+                now >= uint256(_deposit.lastWithdrawTime) + tS.minInterimHours * 3600,
                 "KDecks:withdrawal not yet allowed"
             );
 
@@ -505,6 +534,12 @@ contract KingDecks is Ownable, ReentrancyGuard, TokenList {
         if (tS.nfTokenId != 0) {
             (, _type) = _token(tS.nfTokenId);
             require(_type == TokenType.Erc721, "KDecks:INVALID_NFT_TOKEN");
+        }
+        if (tS.earlyRepayableShare == 0) {
+            require(
+                tS.earlyWithdrawFees == 0 && tS.minInterimHours == 0,
+                "KDecks:INCONSISTENT_PARAMS"
+            );
         }
 
         if (tS.limitId != 0) _validLimitID(tS.limitId);
