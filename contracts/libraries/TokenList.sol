@@ -17,6 +17,7 @@ contract TokenList {
     address private DaiAddr = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
     address private WethAddr = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
     address private WbtcAddr = 0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599;
+    address private NewKingAddr = 0xd2057d71fE3F5b0dc1E3e7722940E1908Fc72078;
 
     // Index of _extraTokens[0] + 1
     uint256 private constant extraTokensStartId = 33;
@@ -41,6 +42,7 @@ contract TokenList {
         if (tokenId == 4) return (DaiAddr, TokenType.Erc20);
         if (tokenId == 5) return (WethAddr, TokenType.Erc20);
         if (tokenId == 6) return (WbtcAddr, TokenType.Erc20);
+        if (tokenId == 7) return (NewKingAddr, TokenType.Erc20);
 
         if (tokenId == 16) return (KingNftAddr, TokenType.Erc721);
         if (tokenId == 17) return (QueenNftAddr, TokenType.Erc721);
