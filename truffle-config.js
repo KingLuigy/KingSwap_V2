@@ -81,7 +81,6 @@ module.exports = {
       docker: false,
       parser: "solcjs",
       settings: {
-        evmVersion: 'istanbul',
         optimizer: {
           enabled: !isCoverage,
           runs: 200

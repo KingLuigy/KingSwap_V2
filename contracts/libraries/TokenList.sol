@@ -4,20 +4,20 @@ pragma experimental ABIEncoderV2;
 contract TokenList {
 
     // "Listed" (hard-coded) tokens
-    address private KingAddr = 0x5a731151d6510Eb475cc7a0072200cFfC9a3bFe5;
-    address private KingNftAddr = 0x4c9c971fbEFc93E0900988383DC050632dEeC71E;
-    address private QueenNftAddr = 0x3068b3313281f63536042D24562896d080844c95;
-    address private KnightNftAddr = 0xF85C874eA05E2225982b48c93A7C7F701065D91e;
-    address private KingWerewolfNftAddr = 0x39C8788B19b0e3CeFb3D2f38c9063b03EB1E2A5a;
-    address private QueenVampzNftAddr = 0x440116abD7338D9ccfdc8b9b034F5D726f615f6d;
-    address private KnightMummyNftAddr = 0x91cC2cf7B0BD7ad99C0D8FA4CdfC93C15381fb2d;
+    address private constant KingAddr = 0x5a731151d6510Eb475cc7a0072200cFfC9a3bFe5;
+    address private constant KingNftAddr = 0x4c9c971fbEFc93E0900988383DC050632dEeC71E;
+    address private constant QueenNftAddr = 0x3068b3313281f63536042D24562896d080844c95;
+    address private constant KnightNftAddr = 0xF85C874eA05E2225982b48c93A7C7F701065D91e;
+    address private constant KingWerewolfNftAddr = 0x39C8788B19b0e3CeFb3D2f38c9063b03EB1E2A5a;
+    address private constant QueenVampzNftAddr = 0x440116abD7338D9ccfdc8b9b034F5D726f615f6d;
+    address private constant KnightMummyNftAddr = 0x91cC2cf7B0BD7ad99C0D8FA4CdfC93C15381fb2d;
     //
-    address private UsdtAddr = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
-    address private UsdcAddr = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
-    address private DaiAddr = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
-    address private WethAddr = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
-    address private WbtcAddr = 0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599;
-    address private NewKingAddr = 0xd2057d71fE3F5b0dc1E3e7722940E1908Fc72078;
+    address private constant UsdtAddr = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
+    address private constant UsdcAddr = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
+    address private constant DaiAddr = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
+    address private constant WethAddr = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+    address private constant WbtcAddr = 0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599;
+    address private constant NewKingAddr = 0xd2057d71fE3F5b0dc1E3e7722940E1908Fc72078;
 
     // Index of _extraTokens[0] + 1
     uint256 private constant extraTokensStartId = 33;
@@ -32,10 +32,9 @@ contract TokenList {
     // Extra tokens (addition to the hard-coded tokens list)
     Token[] private _extraTokens;
 
-    // Declared "internal virtual" to let tests (mocks) re-define it
     function _listedToken(
         uint8 tokenId
-    ) internal view virtual returns(address, TokenType) {
+    ) internal pure virtual returns(address, TokenType) {
         if (tokenId == 1) return (KingAddr, TokenType.Erc20);
         if (tokenId == 2) return (UsdtAddr, TokenType.Erc20);
         if (tokenId == 3) return (UsdcAddr, TokenType.Erc20);
