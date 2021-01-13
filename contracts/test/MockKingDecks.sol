@@ -50,6 +50,14 @@ contract MockKingDecks is KingDecks {
         return _decodeDepositId(depositId);
     }
 
+    function __amountOut(
+        uint256 amount,
+        uint64 rate,
+        uint8 decIn,
+        uint8 decOut
+    ) external pure returns(uint256 out) {
+        return _amountOut(amount, rate, decIn, decOut);
+    }
 
     function __addArrElements(uint256[] calldata els) external {
         for (uint256 i = 0; i < els.length; i++) {

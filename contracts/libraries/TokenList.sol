@@ -27,6 +27,7 @@ contract TokenList {
     struct Token {
         address addr;
         TokenType _type;
+        uint8 decimals;
     }
 
     // Extra tokens (addition to the hard-coded tokens list)
@@ -34,44 +35,49 @@ contract TokenList {
 
     function _listedToken(
         uint8 tokenId
-    ) internal pure virtual returns(address, TokenType) {
-        if (tokenId == 1) return (KingAddr, TokenType.Erc20);
-        if (tokenId == 2) return (UsdtAddr, TokenType.Erc20);
-        if (tokenId == 3) return (UsdcAddr, TokenType.Erc20);
-        if (tokenId == 4) return (DaiAddr, TokenType.Erc20);
-        if (tokenId == 5) return (WethAddr, TokenType.Erc20);
-        if (tokenId == 6) return (WbtcAddr, TokenType.Erc20);
-        if (tokenId == 7) return (NewKingAddr, TokenType.Erc20);
+    ) internal pure virtual returns(address, TokenType, uint8 decimals) {
+        if (tokenId == 1) return (KingAddr, TokenType.Erc20, 18);
+        if (tokenId == 2) return (UsdtAddr, TokenType.Erc20, 6);
+        if (tokenId == 3) return (UsdcAddr, TokenType.Erc20, 6);
+        if (tokenId == 4) return (DaiAddr, TokenType.Erc20, 18);
+        if (tokenId == 5) return (WethAddr, TokenType.Erc20, 18);
+        if (tokenId == 6) return (WbtcAddr, TokenType.Erc20, 8);
+        if (tokenId == 7) return (NewKingAddr, TokenType.Erc20, 18);
 
-        if (tokenId == 16) return (KingNftAddr, TokenType.Erc721);
-        if (tokenId == 17) return (QueenNftAddr, TokenType.Erc721);
-        if (tokenId == 18) return (KnightNftAddr, TokenType.Erc721);
-        if (tokenId == 19) return (KingWerewolfNftAddr, TokenType.Erc721);
-        if (tokenId == 20) return (QueenVampzNftAddr, TokenType.Erc721);
-        if (tokenId == 21) return (KnightMummyNftAddr, TokenType.Erc721);
+        if (tokenId == 16) return (KingNftAddr, TokenType.Erc721, 0);
+        if (tokenId == 17) return (QueenNftAddr, TokenType.Erc721, 0);
+        if (tokenId == 18) return (KnightNftAddr, TokenType.Erc721, 0);
+        if (tokenId == 19) return (KingWerewolfNftAddr, TokenType.Erc721, 0);
+        if (tokenId == 20) return (QueenVampzNftAddr, TokenType.Erc721, 0);
+        if (tokenId == 21) return (KnightMummyNftAddr, TokenType.Erc721, 0);
 
-        return (address(0), TokenType.unknown);
+        return (address(0), TokenType.unknown, 0);
     }
 
     function _tokenAddr(uint8 tokenId) internal view returns(address) {
-        (address addr, ) = _token(tokenId);
+        (address addr,, ) = _token(tokenId);
         return addr;
     }
 
     function _token(
         uint8 tokenId
-    ) internal view returns(address, TokenType) {
+    ) internal view returns(address, TokenType, uint8 decimals) {
         if (tokenId < extraTokensStartId) return _listedToken(tokenId);
 
         uint256 i = tokenId - extraTokensStartId;
         Token memory token = _extraTokens[i];
-        return (token.addr, token._type);
+        return (token.addr, token._type, token.decimals);
     }
 
     function _addTokens(
         address[] memory addresses,
-        TokenType[] memory types
+        TokenType[] memory types,
+        uint8[] memory decimals
     ) internal {
+        require(
+            addresses.length == types.length && addresses.length == decimals.length,
+            "TokList:INVALID_LISTS_LENGTHS"
+        );
         require(
             addresses.length + _extraTokens.length + extraTokensStartId <= 256,
             "TokList:TOO_MANY_TOKENS"
@@ -79,7 +85,7 @@ contract TokenList {
         for (uint256 i = 0; i < addresses.length; i++) {
             require(addresses[i] != address(0), "TokList:INVALID_TOKEN_ADDRESS");
             require(types[i] != TokenType.unknown, "TokList:INVALID_TOKEN_TYPE");
-            _extraTokens.push(Token(addresses[i], types[i]));
+            _extraTokens.push(Token(addresses[i], types[i], decimals[i]));
         }
     }
 }
