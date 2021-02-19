@@ -1,0 +1,6 @@
+truffle-test:
+  image: node:12.18.3
+  stage: test
+  script:
+    - yarn install
+    - yarn run test:ci
